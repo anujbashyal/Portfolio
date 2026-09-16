@@ -1,0 +1,223 @@
+{% extends 'portfolio/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+.about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    height: 100%;
+}
+
+.about-text .stats {
+    display: flex;
+    gap: 3rem;
+    margin-bottom: 3rem;
+}
+
+.stat-item h3 {
+    font-size: 3rem;
+    font-weight: 300;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.stat-item p {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.about-text h1 {
+    font-size: 5.5rem;
+    line-height: 1;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.03em;
+}
+
+.about-text .subtitle {
+    color: var(--text-secondary);
+    font-size: 1.25rem;
+}
+
+.scroll-down {
+    margin-top: 6rem;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.about-image-wrapper {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    height: 600px;
+    cursor: pointer;
+    background: var(--bg-card);
+    display: flex;
+    flex-direction: column;
+}
+
+.about-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(100%);
+    transition: opacity 0.2s;
+}
+
+.matrix-overlay-banner {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid rgba(255,255,255,0.1);
+    z-index: 10;
+}
+
+.matrix-overlay-banner span {
+    font-size: 0.85rem;
+    color: #fff;
+}
+
+.image-status-text {
+    text-align: right;
+    margin-top: 1rem;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.1em;
+}
+
+.puzzle-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    pointer-events: none;
+    opacity: 0;
+    z-index: 5;
+}
+.puzzle-piece {
+    background-image: var(--img-src);
+    filter: grayscale(100%);
+    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s;
+}
+
+.is-animating img { opacity: 0; }
+.is-animating .matrix-overlay-banner { opacity: 0; transition: opacity 0.2s; }
+.is-animating .puzzle-overlay { opacity: 1; }
+.is-animating .puzzle-piece {
+    transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(0.8);
+    opacity: 0.7;
+}
+{% endblock %}
+
+{% block content %}
+<div class="about-grid">
+    <div class="about-text">
+        <div class="stats">
+            <div class="stat-item">
+                <h3 class="heading-font">2</h3>
+                <p>Project completed</p>
+            </div>
+            <div class="stat-item">
+                <h3 class="heading-font">2</h3>
+                <p>Product released</p>
+            </div>
+        </div>
+        <h1 class="heading-font">Hello</h1>
+        <p class="subtitle">— it's Anuj Bashyal, Backend developer</p>
+        
+        <div class="scroll-down mono">
+            Scroll down ↓
+        </div>
+    </div>
+    
+    <div>
+        <div class="about-image-wrapper" id="profileImage" onclick="triggerPuzzle()">
+            {% if settings and settings.profile_photo %}
+                <img src="{{ settings.profile_photo.url }}" alt="Anuj Bashyal">
+            {% else %}
+                <img src="{% static 'portfolio/images/profile.jpg' %}" alt="Anuj Bashyal">
+            {% endif %}
+            
+            <div class="matrix-overlay-banner mono">
+                <span>Interactive Matrix</span>
+                <span style="color: #a1a1aa;">Click to shatter portrait ⚡</span>
+            </div>
+
+            <div class="puzzle-overlay" id="puzzleOverlay"></div>
+        </div>
+        <div class="image-status-text mono">
+            STATUS: AVAILABLE FOR CONTRACTS
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const imgContainer = document.getElementById('profileImage');
+    const overlay = document.getElementById('puzzleOverlay');
+    const imgSrc = imgContainer.querySelector('img').src;
+    
+    const resizeObserver = new ResizeObserver(entries => {
+        for (let entry of entries) {
+            const width = entry.contentRect.width;
+            const height = entry.contentRect.height;
+            
+            overlay.innerHTML = '';
+            
+            const colWidth = width / 4;
+            const rowHeight = height / 4;
+
+            for (let row = 0; row < 4; row++) {
+                for (let col = 0; col < 4; col++) {
+                    const piece = document.createElement('div');
+                    piece.className = 'puzzle-piece';
+                    piece.style.setProperty('--img-src', `url('${imgSrc}')`);
+                    
+                    piece.style.backgroundSize = `${width}px ${height}px`;
+                    piece.style.backgroundPosition = `-${col * colWidth}px -${row * rowHeight}px`;
+                    
+                    const tx = (Math.random() - 0.5) * 150 + 'px';
+                    const ty = (Math.random() - 0.5) * 150 + 'px';
+                    const rot = (Math.random() - 0.5) * 45 + 'deg';
+                    
+                    piece.style.setProperty('--tx', tx);
+                    piece.style.setProperty('--ty', ty);
+                    piece.style.setProperty('--rot', rot);
+                    
+                    overlay.appendChild(piece);
+                }
+            }
+        }
+    });
+
+    resizeObserver.observe(imgContainer);
+
+    let isAnimating = false;
+    function triggerPuzzle() {
+        if (isAnimating) return;
+        isAnimating = true;
+        
+        imgContainer.classList.add('is-animating');
+        
+        setTimeout(() => {
+            imgContainer.classList.remove('is-animating');
+            isAnimating = false;
+        }, 800);
+    }
+</script>
+{% endblock %}

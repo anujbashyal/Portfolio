@@ -1,0 +1,327 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anuj Bashyal | Backend Developer</title>
+    <!-- Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-outer: #0a0d12;
+            --bg-inner: #11141a;
+            --bg-card: #161b22;
+            --text-primary: #ffffff;
+            --text-secondary: #8b949e;
+            --accent-cyan: #06b6d4;
+            --accent-green: #00ff66;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(255, 255, 255, 0.15);
+        }
+
+        [data-theme="light"] {
+            --bg-outer: #f8fafc;
+            --bg-inner: #ffffff;
+            --bg-card: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --accent-cyan: #0891b2;
+            --accent-green: #059669;
+            --border-color: rgba(0, 0, 0, 0.1);
+            --border-hover: rgba(5, 150, 105, 0.4);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-outer);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .heading-font { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+        /* App Window Container */
+        .app-container {
+            background-color: var(--bg-inner);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 1400px;
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        /* Left Sidebar */
+        .sidebar {
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4rem 0;
+            position: relative;
+        }
+        
+        .sidebar-text {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        .sidebar-line {
+            width: 1px;
+            height: 100px;
+            background-color: var(--border-color);
+            margin: 2rem 0;
+        }
+
+        .sidebar-year {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+        }
+
+        /* Main Content Area */
+        .main-area {
+            display: flex;
+            flex-direction: column;
+            min-height: 800px;
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 3rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            color: var(--text-primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            position: relative;
+            padding: 0.5rem 1.5rem;
+            border-radius: 99px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+            z-index: 1;
+            border: 1px solid transparent;
+        }
+
+        /* Crazy Hover Effect */
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(6, 182, 212, 0.2); /* Cyan glow */
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+            z-index: -1;
+            filter: blur(8px);
+        }
+
+        .nav-link:hover {
+            color: #ffffff;
+            letter-spacing: 1px;
+            text-shadow: 0 0 8px rgba(6, 182, 212, 0.8), 0 0 15px rgba(0, 255, 102, 0.6);
+            border: 1px solid rgba(6, 182, 212, 0.5);
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.3), inset 0 0 10px rgba(0, 255, 102, 0.2);
+            transform: scale(1.05);
+        }
+
+        .nav-link:hover::before {
+            width: 150%;
+            height: 150%;
+        }
+
+        /* Click/Active Ripple Animation */
+        .nav-link:active {
+            transform: scale(0.95);
+            box-shadow: 0 0 30px rgba(6, 182, 212, 0.8), inset 0 0 20px rgba(0, 255, 102, 0.5);
+        }
+
+        .nav-link.active {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+            letter-spacing: 0.5px;
+        }
+        [data-theme="light"] .nav-link.active {
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0,0,0,0.1);
+            box-shadow: none;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 99px;
+            padding: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+        [data-theme="light"] .theme-toggle {
+            background: rgba(0, 0, 0, 0.05);
+        }
+        .theme-toggle span {
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            transition: all 0.2s;
+        }
+        .theme-toggle .active-mode {
+            background: var(--accent-cyan);
+            color: #fff;
+        }
+
+        .btn-primary {
+            background: var(--text-primary);
+            color: var(--bg-outer);
+            text-decoration: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 99px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: opacity 0.2s;
+        }
+        .btn-primary:hover { opacity: 0.9; }
+        
+        /* Content Padding */
+        .content-padding {
+            padding: 3rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        {% block extra_css %}{% endblock %}
+
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Left Vertical Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-text mono">BACKEND DEVELOPER</div>
+            <div class="sidebar-line"></div>
+            <div class="sidebar-year mono">2024</div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-area">
+            <!-- Navbar -->
+            <nav class="navbar">
+                <div class="nav-logo">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM11 19.93C7.05 19.43 4 16.05 4 12C4 7.95 7.05 4.57 11 4.07V19.93ZM13 4.07C16.95 4.57 20 7.95 20 12C20 16.05 16.95 19.43 13 19.93V4.07Z" fill="currentColor"/>
+                    </svg>
+                </div>
+                <div class="nav-links">
+                    <a href="{% url 'portfolio:about' %}" class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}">About Me</a>
+                    <a href="{% url 'portfolio:portfolio' %}" class="nav-link {% if request.resolver_match.url_name == 'portfolio' %}active{% endif %}">Portfolio</a>
+                    <a href="{% url 'portfolio:services' %}" class="nav-link {% if request.resolver_match.url_name == 'services' %}active{% endif %}">Services</a>
+                </div>
+                <div class="nav-actions">
+                    <div class="theme-toggle" onclick="toggleTheme()">
+                        <span id="theme-light">☀️</span>
+                        <span id="theme-dark" class="active-mode">🌙</span>
+                    </div>
+                    <a href="#" class="btn-primary">Book A Call ↗</a>
+                </div>
+            </nav>
+
+            <div class="content-padding">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const htmlDoc = document.documentElement;
+        const themeLight = document.getElementById('theme-light');
+        const themeDark = document.getElementById('theme-dark');
+        
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            htmlDoc.setAttribute('data-theme', savedTheme);
+            updateThemeIcons(savedTheme);
+        }
+        
+        function toggleTheme() {
+            const currentTheme = htmlDoc.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            htmlDoc.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcons(newTheme);
+        }
+
+        function updateThemeIcons(theme) {
+            if (theme === 'dark') {
+                themeDark.classList.add('active-mode');
+                themeLight.classList.remove('active-mode');
+            } else {
+                themeLight.classList.add('active-mode');
+                themeDark.classList.remove('active-mode');
+            }
+        }
+        
+        initTheme();
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+
+</body>
+</html>

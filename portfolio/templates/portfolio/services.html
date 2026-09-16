@@ -1,0 +1,124 @@
+{% extends 'portfolio/base.html' %}
+
+{% block extra_css %}
+.section-tag {
+    color: var(--accent-cyan);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.section-title {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.section-desc {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+}
+
+.section-divider {
+    height: 1px;
+    background: var(--border-color);
+    margin-bottom: 3rem;
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 4rem;
+}
+
+.service-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    transition: border-color 0.2s, transform 0.2s;
+}
+
+.service-card:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-4px);
+}
+
+.service-icon {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.service-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.service-desc {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    line-height: 1.6;
+}
+
+.services-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.return-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+.return-link:hover { color: var(--text-primary); }
+
+.btn-white {
+    background: var(--text-primary);
+    color: var(--bg-outer);
+    text-decoration: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 99px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: opacity 0.2s;
+}
+.btn-white:hover { opacity: 0.9; }
+{% endblock %}
+
+{% block content %}
+<div class="section-tag mono">CAPABILITIES</div>
+<h2 class="section-title heading-font">Architectural Services</h2>
+<p class="section-desc">Building fault-tolerant foundations for high-scale enterprise applications.</p>
+<div class="section-divider"></div>
+
+<div class="services-grid">
+    <div class="service-card">
+        <div class="service-icon">⚡</div>
+        <h3 class="service-title heading-font">API & Microservices</h3>
+        <p class="service-desc">gRPC, GraphQL, RESTful APIs engineered for predictable latency, rate-limiting, and fault isolation.</p>
+    </div>
+    
+    <div class="service-card">
+        <div class="service-icon">🗄️</div>
+        <h3 class="service-title heading-font">Database Topology</h3>
+        <p class="service-desc">Schema normalization, indexing audits, sharding strategies, read-replica clusters with PostgreSQL & ClickHouse.</p>
+    </div>
+    
+    <div class="service-card">
+        <div class="service-icon">🛡️</div>
+        <h3 class="service-title heading-font">Security & DevOps</h3>
+        <p class="service-desc">OAuth2 / OIDC token rotation, Zero-Trust network policies, Docker orchestration, and hardened CI/CD scripts.</p>
+    </div>
+</div>
+
+<div class="services-footer mono">
+    <a href="{% url 'portfolio:about' %}" class="return-link">← Return to Overview</a>
+    <a href="#" class="btn-white heading-font">Start a Project Consultation</a>
+</div>
+{% endblock %}

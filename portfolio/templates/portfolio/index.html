@@ -1,0 +1,495 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anuj Bashyal | Backend Developer</title>
+    <!-- Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-outer: #0a0d12;
+            --bg-inner: #11141a;
+            --bg-card: #161b22;
+            --text-primary: #ffffff;
+            --text-secondary: #8b949e;
+            --accent-cyan: #06b6d4;
+            --accent-green: #00ff66;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(255, 255, 255, 0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-outer);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .heading-font { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+        /* App Window Container */
+        .app-container {
+            background-color: var(--bg-inner);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 1400px;
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Left Sidebar */
+        .sidebar {
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4rem 0;
+            position: relative;
+        }
+        
+        .sidebar-text {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        .sidebar-line {
+            width: 1px;
+            height: 100px;
+            background-color: var(--border-color);
+            margin: 2rem 0;
+        }
+
+        .sidebar-year {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+        }
+
+        /* Main Content Area */
+        .main-area {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 3rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .nav-logo {
+            font-weight: 700;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover { color: var(--text-primary); }
+        .nav-link.active {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.4rem 1.2rem;
+            border-radius: 99px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 99px;
+            padding: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+        .theme-toggle span {
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+        }
+        .theme-toggle .active-mode {
+            background: var(--accent-cyan);
+            color: #000;
+        }
+
+        .btn-primary {
+            background: var(--text-primary);
+            color: var(--bg-outer);
+            text-decoration: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 99px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: opacity 0.2s;
+        }
+        .btn-primary:hover { opacity: 0.9; }
+
+        /* Content Padding */
+        .content-padding {
+            padding: 3rem;
+            flex-grow: 1;
+        }
+
+        /* Hero Section with Image */
+        .hero-section {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 3rem;
+            margin-bottom: 4rem;
+            align-items: center;
+        }
+
+        .hero-image-wrapper {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            aspect-ratio: 3/4;
+        }
+
+        .hero-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .hero-text h1 {
+            font-size: 3rem;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-text p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin-bottom: 2rem;
+        }
+
+        /* Portfolio Header */
+        .section-tag {
+            color: var(--accent-cyan);
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-divider {
+            height: 1px;
+            background: var(--border-color);
+            margin-bottom: 3rem;
+        }
+
+        /* Projects Grid */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .project-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            transition: border-color 0.2s;
+        }
+
+        .project-card:hover {
+            border-color: var(--border-hover);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-tag {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+        }
+
+        .status-badge {
+            background: rgba(0, 255, 102, 0.1);
+            color: var(--accent-green);
+            padding: 0.25rem 0.75rem;
+            border-radius: 99px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-transform: uppercase;
+            border: 1px solid rgba(0, 255, 102, 0.2);
+        }
+        
+        .status-badge.active-testing {
+            color: var(--accent-green);
+            background: rgba(0, 255, 102, 0.1);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background-color: currentColor;
+            border-radius: 50%;
+            box-shadow: 0 0 6px currentColor;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            flex-grow: 1;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .card-stack {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+        }
+
+        .card-link {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Footer Status Bar */
+        .footer-status {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            margin: 3rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+        }
+
+        .status-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-primary);
+        }
+
+        .return-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .return-link:hover { color: var(--text-primary); }
+
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <!-- Left Vertical Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-text mono">BACKEND DEVELOPER</div>
+            <div class="sidebar-line"></div>
+            <div class="sidebar-year mono">2024</div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-area">
+            
+            <!-- Navbar -->
+            <nav class="navbar">
+                <div class="nav-logo">
+                    <!-- Abstract logo placeholder -->
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM11 19.93C7.05 19.43 4 16.05 4 12C4 7.95 7.05 4.57 11 4.07V19.93ZM13 4.07C16.95 4.57 20 7.95 20 12C20 16.05 16.95 19.43 13 19.93V4.07Z" fill="white"/>
+                    </svg>
+                </div>
+                <div class="nav-links">
+                    <a href="#" class="nav-link">About Me</a>
+                    <a href="#" class="nav-link active">Portfolio</a>
+                    <a href="#" class="nav-link">Services</a>
+                </div>
+                <div class="nav-actions">
+                    <div class="theme-toggle">
+                        <span>☀️</span>
+                        <span class="active-mode">🌙</span>
+                    </div>
+                    <a href="#" class="btn-primary">Book A Call ↗</a>
+                </div>
+            </nav>
+
+            <div class="content-padding">
+                
+                <!-- Hero Section (Integrating the Photo) -->
+                <div class="hero-section">
+                    <div class="hero-image-wrapper">
+                        <!-- Referencing the uploaded image in the static directory -->
+                        <img src="{% static 'portfolio/images/profile.jpg' %}" alt="Anuj Bashyal">
+                    </div>
+                    <div class="hero-text">
+                        <h1 class="heading-font">Hello — it's Anuj Bashyal, your code magician.</h1>
+                        <p>Architecting robust backends, flawless API integrations, and leading rigorous QA workflows.</p>
+                        <div class="mono" style="color: var(--accent-cyan); font-size: 0.85rem;">
+                            [ 2 / Project completed ] &nbsp;&nbsp; [ 2 / Product released ]
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Portfolio Section matching the UI image -->
+                <div class="section-tag mono">ENGINEERED SOLUTIONS</div>
+                <h2 class="section-title heading-font">Featured Backend Deployments</h2>
+                <p class="section-desc">Robust Django architectures, comprehensive QA testing workflows, and scalable API integrations.</p>
+                <div class="section-divider"></div>
+
+                <div class="projects-grid">
+                    
+                    {% for project in projects %}
+                    <div class="project-card">
+                        <div class="card-header mono">
+                            <span class="card-tag">{{ project.tag }}</span>
+                            <div class="status-badge">
+                                <span class="status-dot"></span> {{ project.status }}
+                            </div>
+                        </div>
+                        <h3 class="card-title heading-font">{{ project.title }}</h3>
+                        <p class="card-desc">{{ project.description }}</p>
+                        <div class="card-footer mono">
+                            <span class="card-stack">{{ project.tech_stack }}</span>
+                            <a href="#" class="card-link">Inspect Spec ↗</a>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <!-- Fallback hardcoded projects if DB is empty -->
+                    <div class="project-card">
+                        <div class="card-header mono">
+                            <span class="card-tag">#001 // INTERNAL SYSTEMS</span>
+                            <div class="status-badge">
+                                <span class="status-dot"></span> DEPLOYED
+                            </div>
+                        </div>
+                        <h3 class="card-title heading-font">Employee Evaluation Platform</h3>
+                        <p class="card-desc">Architected the backend for a comprehensive employee evaluation system. Built with Django REST APIs, featuring custom database design, secure authentication, and seamless payment integration.</p>
+                        <div class="card-footer mono">
+                            <span class="card-stack">Django / REST API / Payments</span>
+                            <a href="#" class="card-link">Inspect Spec ↗</a>
+                        </div>
+                    </div>
+
+                    <div class="project-card">
+                        <div class="card-header mono">
+                            <span class="card-tag">#002 // QUALITY ASSURANCE</span>
+                            <div class="status-badge active-testing">
+                                <span class="status-dot"></span> ACTIVE TESTING
+                            </div>
+                        </div>
+                        <h3 class="card-title heading-font">E-Commerce E2E QA Workflows</h3>
+                        <p class="card-desc">Leading end-to-end QA testing across iOS and web platforms. Managing rigorous bug reporting and collaborating closely with developers to ensure robust, high-quality system stability.</p>
+                        <div class="card-footer mono">
+                            <span class="card-stack">iOS QA / Web QA / E2E Testing</span>
+                            <a href="#" class="card-link">Inspect Spec ↗</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                </div>
+            </div>
+
+            <!-- Footer Status -->
+            <div class="footer-status mono">
+                <div class="status-left">
+                    <span class="status-dot" style="color: var(--accent-green);"></span>
+                    System Status: All E2E tests passing. Backend stability at 100%.
+                </div>
+                <a href="#" class="return-link">← Return to Hero</a>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>
