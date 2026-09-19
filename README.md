@@ -66,4 +66,4 @@ It is built as a multi-page web application featuring custom CSS grid layouts, d
 - **Projects**: Add, edit, or delete projects under the **Projects** section in the admin panel to update the `/portfolio/` page grid.
 
 ## License
-MIT License. Feel free to clone, customize, and use this layout f
+MIT License. Feel free to clone, customize, and use this layout for your own professional portfolio!
