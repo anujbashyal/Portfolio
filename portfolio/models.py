@@ -34,6 +34,8 @@ class ContactRequest(models.Model):
 
 class PortfolioSettings(models.Model):
     profile_photo = models.ImageField(upload_to='profile_photos/', blank=True, null=True, help_text="Upload your profile photo here")
+    api_service_image = models.ImageField(upload_to='service_images/', blank=True, null=True, help_text="Hover image for API Architecture section")
+    db_service_image = models.ImageField(upload_to='service_images/', blank=True, null=True, help_text="Hover image for Database Topology section")
     projects_completed = models.IntegerField(default=2, help_text="Number of projects completed")
     products_released = models.IntegerField(default=2, help_text="Number of products released")
 

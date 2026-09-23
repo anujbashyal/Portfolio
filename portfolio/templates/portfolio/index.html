@@ -1,584 +1,1129 @@
+{% extends 'portfolio/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anuj Bashyal | Backend Developer</title>
-    <!-- Typography -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+
+{% block extra_css %}
+<style>
+.page-container {
+    width: 100%;
+}
+
+/* Hero Section */
+.hero-section {
+    position: relative;
+    overflow: hidden;
+    min-height: calc(100vh - var(--header-height));
+    padding-top: calc(var(--header-height) + 4rem);
+    padding-left: var(--padding-x);
+    padding-right: var(--padding-x);
+    padding-bottom: 4rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(4rem, 12vw, 11rem);
+    line-height: 0.85;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-white);
+    margin-top: 2.4rem;
+}
+
+.hero-title .line {
+    display: block;
+    overflow: visible; /* changed from hidden to allow 3D pop */
+    padding-top: 0.18em;
+    margin-top: -0.18em;
+    perspective: 1000px; /* added for 3D effect */
+}
+
+.hero-title .char {
+    display: inline-block;
+    transform: translateY(112%); /* Initial state for GSAP */
+    transform-style: preserve-3d;
+}
+
+.hero-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+}
+
+@media (min-width: 900px) {
+    .hero-content-wrapper {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .hero-text-content {
+        flex: 1.2;
+    }
+    .hero-center-graphic {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .hero-image-wrapper {
+        flex: 0 0 320px;
+        display: flex;
+        justify-content: flex-end;
+    }
+}
+
+.hero-center-graphic {
+    display: none; /* hidden on small screens */
+}
+@media (min-width: 900px) {
+    .hero-center-graphic {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5rem;
+        flex: 1;
+        min-height: 320px; /* Reserve space for the jelly's home */
+    }
+}
+
+.jelly-hint {
+    position: absolute;
+    text-align: center;
+    opacity: 0.6;
+    transition: opacity 0.4s ease;
+    font-family: var(--font-mono);
+    color: var(--text-gray);
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    animation: bounceHint 2s infinite ease-in-out;
+    pointer-events: none;
+    z-index: 10;
+}
+
+@keyframes bounceHint {
+    0%, 100% { transform: translate(-50%, 0); }
+    50% { transform: translate(-50%, -4px); }
+}
+
+.jelly-speech-bubble {
+    position: absolute;
+    pointer-events: none;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.8rem 1.4rem;
+    border-radius: 20px;
+    font-family: var(--font-mono);
+    color: var(--text-white);
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-align: center;
+    white-space: nowrap;
+    opacity: 0;
+    transform-origin: bottom center;
+    transform: translate(-50%, -100%) scale(0.3);
+    transition: opacity 0.3s ease, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 10;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.jelly-speech-bubble.active {
+    opacity: 1;
+    transform: translate(-50%, -100%) scale(1);
+}
+
+.jelly-speech-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px 6px 0;
+    border-style: solid;
+    border-color: rgba(255, 255, 255, 0.2) transparent transparent transparent;
+    display: block;
+    width: 0;
+}
+
+#nodeNetwork {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.hero-image {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    aspect-ratio: 4/5;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 20px 40px -20px rgba(255, 217, 0, 0.15);
+}
+
+.hero-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    margin-top: 4rem;
+}
+
+@media (min-width: 640px) {
+    .hero-meta {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-end;
+    }
+}
+
+.hero-meta p, .hero-meta a {
+    font-family: var(--font-mono);
+    color: var(--text-white);
+    font-size: 1.4rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+
+.hero-subtitle-area {
+    display: flex;
+    flex-direction: column;
+    gap: 2.4rem;
+    padding-top: 4rem;
+    margin-top: auto; /* Pushes it to the bottom of the flex container */
+}
+
+@media (min-width: 640px) {
+    .hero-subtitle-area {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-end;
+    }
+}
+
+.hero-subtitle-text {
+    font-family: var(--font-mono);
+    color: var(--text-gray);
+    font-size: 1.8rem;
+    line-height: 1.5;
+    text-transform: uppercase;
+    max-width: 52rem;
+    white-space: pre-line;
+    padding-left: 2rem;
+    border-left: 2px solid var(--border-color);
+    transition: border-color 0.3s ease, color 0.3s ease;
+}
+
+.hero-subtitle-text:hover {
+    border-left-color: var(--accent-yellow);
+    color: var(--text-white);
+}
+
+.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-color);
+    padding: 1.5rem 3rem;
+    font-family: var(--font-mono);
+    color: var(--text-white);
+    font-size: 1.4rem;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    background: transparent;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.btn-secondary:hover {
+    background: var(--text-white);
+    color: var(--bg-color);
+}
+
+.btn-icon {
+    margin-left: 10px;
+    transition: transform 0.3s ease;
+}
+
+.btn-secondary:hover .btn-icon {
+    transform: translateX(5px);
+}
+
+/* Services Section */
+.services-section {
+    border-top: 1px solid var(--border-color);
+}
+
+.services-header {
+    padding: calc(var(--padding-x) * 2) var(--padding-x) calc(var(--padding-x) * 1.5);
+    display: flex;
+    flex-direction: column;
+    gap: 2.4rem;
+}
+
+.section-mono-tag {
+    font-family: var(--font-mono);
+    color: var(--accent-yellow);
+    font-size: 1.4rem;
+    text-transform: uppercase;
+}
+
+.section-huge-title {
+    font-family: var(--font-display);
+    font-size: clamp(4.8rem, 10vw, 9rem);
+    line-height: 0.88;
+    text-transform: uppercase;
+    color: var(--text-white);
+}
+
+.service-block {
+    border-bottom: 1px solid var(--border-color);
+    padding: calc(var(--padding-x) * 1.6) var(--padding-x);
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.service-meta {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.service-dot {
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 50%;
+    background-color: var(--accent-yellow);
+}
+
+.service-title {
+    font-family: var(--font-display);
+    font-size: clamp(3.6rem, 8vw, 6.4rem);
+    line-height: 0.9;
+    text-transform: uppercase;
+    color: var(--text-white);
+}
+
+.service-desc {
+    font-family: var(--font-body);
+    color: var(--text-gray);
+    font-size: 1.8rem;
+    line-height: 1.4;
+    max-width: 800px;
+}
+
+.service-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+}
+
+.service-tag {
+    border: 1px solid var(--border-color);
+    padding: 0.6rem 1.2rem;
+    font-family: var(--font-mono);
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    color: var(--text-dark);
+}
+
+.service-hover-img {
+    position: fixed;
+    top: 0; left: 0;
+    width: 320px;
+    pointer-events: none;
+    z-index: 9999;
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.4)); /* Helps dark text contrast on dark background */
+}
+
+/* Projects Section */
+.projects-section {
+    padding: 10vh var(--padding-x);
+    border-top: 1px solid var(--border-color);
+}
+
+.projects-table {
+    width: 100%;
+    max-width: 1000px;
+    margin-left: auto;
+}
+
+.projects-header {
+    display: grid;
+    grid-template-columns: 1fr 5fr 3fr;
+    gap: 2rem;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.projects-header p {
+    font-family: var(--font-mono);
+    color: var(--text-dark);
+    font-size: 1.4rem;
+    text-transform: uppercase;
+}
+
+.project-row {
+    display: grid;
+    grid-template-columns: 1fr 5fr 3fr;
+    gap: 2rem;
+    padding: 1.8rem 0;
+    border-bottom: 1px solid var(--border-color);
+    align-items: baseline;
+    transition: background 0.3s ease;
+}
+
+.project-row:hover {
+    background: rgba(255,255,255,0.02);
+}
+
+.project-number {
+    font-family: var(--font-mono);
+    color: var(--text-dark);
+    font-size: 1.4rem;
+}
+
+.project-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.project-name {
+    font-family: var(--font-body);
+    font-size: 1.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--text-white);
+}
+
+.project-awards {
+    font-family: var(--font-mono);
+    color: var(--text-dark);
+    font-size: 1.4rem;
+    text-transform: uppercase;
+}
+
+.project-year {
+    font-family: var(--font-mono);
+    color: var(--text-dark);
+    font-size: 1.4rem;
+    text-align: right;
+}
+
+.gsap-fade {
+    opacity: 0;
+    transform: translateY(30px);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
     
-    <style>
-        :root {
-            --bg-outer: #0a0d12;
-            --bg-inner: #11141a;
-            --bg-card: #161b22;
-            --text-primary: #ffffff;
-            --text-secondary: #8b949e;
-            --accent-cyan: #06b6d4;
-            --accent-green: #00ff66;
-            --border-color: rgba(255, 255, 255, 0.08);
-            --border-hover: rgba(255, 255, 255, 0.15);
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            background-color: var(--bg-outer);
-            color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            line-height: 1.6;
-        }
-
-        .mono { font-family: 'JetBrains Mono', monospace; }
-        .heading-font { font-family: 'Plus Jakarta Sans', sans-serif; }
-
-        /* App Window Container */
-        .app-container {
-            background-color: var(--bg-inner);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            width: 100%;
-            max-width: 1400px;
-            display: grid;
-            grid-template-columns: 80px 1fr;
-            overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
-
-        /* Left Sidebar */
-        .sidebar {
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            padding: 4rem 0;
-            position: relative;
-        }
+    <!-- Hero Section -->
+    <section id="about" class="hero-section">
         
-        .sidebar-text {
-            writing-mode: vertical-rl;
-            transform: rotate(180deg);
-            color: var(--text-secondary);
-            font-size: 0.75rem;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-        }
-
-        .sidebar-line {
-            width: 1px;
-            height: 100px;
-            background-color: var(--border-color);
-            margin: 2rem 0;
-        }
-
-        .sidebar-year {
-            color: var(--text-secondary);
-            font-size: 0.75rem;
-            letter-spacing: 0.1em;
-        }
-
-        /* Main Content Area */
-        .main-area {
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Navbar */
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 2rem 3rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .nav-logo {
-            font-weight: 700;
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        .nav-link {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-
-        .nav-link:hover { color: var(--text-primary); }
-        .nav-link.active {
-            color: var(--text-primary);
-            background: rgba(255, 255, 255, 0.05);
-            padding: 0.4rem 1.2rem;
-            border-radius: 99px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-        }
-
-        .theme-toggle {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-color);
-            border-radius: 99px;
-            padding: 0.25rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-        }
-        .theme-toggle span {
-            width: 20px; height: 20px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-        }
-        .theme-toggle .active-mode {
-            background: var(--accent-cyan);
-            color: #000;
-        }
-
-        .btn-primary {
-            background: var(--text-primary);
-            color: var(--bg-outer);
-            text-decoration: none;
-            padding: 0.6rem 1.2rem;
-            border-radius: 99px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: opacity 0.2s;
-        }
-        .btn-primary:hover { opacity: 0.9; }
-
-        /* Content Padding */
-        .content-padding {
-            padding: 3rem;
-            flex-grow: 1;
-        }
-
-        /* Hero Section with Image */
-        .hero-section {
-            display: grid;
-            grid-template-columns: 350px 1fr;
-            gap: 3rem;
-            margin-bottom: 4rem;
-            align-items: center;
-        }
-
-        .hero-image-wrapper {
-            position: relative;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-            aspect-ratio: 3/4;
-            z-index: 1;
-        }
-
-        .hero-image-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        /* Floating Tech Badges */
-        .hero-image-container {
-            position: relative;
-        }
-        .floating-badge {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-color);
-            backdrop-filter: blur(8px);
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            color: var(--accent-cyan);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            z-index: 10;
-            pointer-events: none;
-            animation: float 6s ease-in-out infinite;
-            white-space: nowrap;
-        }
-        [data-theme="light"] .floating-badge {
-            background: rgba(255, 255, 255, 0.6);
-            color: var(--accent-cyan);
-        }
-        .badge-1 {
-            top: 15%;
-            left: -15%;
-            animation-delay: 0s;
-        }
-        .badge-2 {
-            bottom: 20%;
-            right: -10%;
-            color: var(--accent-green);
-            animation-delay: -2s;
-        }
-        .badge-3 {
-            top: 60%;
-            left: -20%;
-            animation-delay: -4s;
-            color: var(--text-primary);
-        }
-        @keyframes float {
-            0% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-15px) rotate(3deg); }
-            100% { transform: translateY(0px) rotate(0deg); }
-        }
-
-        .hero-text h1 {
-            font-size: 3rem;
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
-            letter-spacing: -0.02em;
-            cursor: default;
-        }
-
-        .hero-text p {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-            max-width: 600px;
-            margin-bottom: 2rem;
-        }
-
-        /* Portfolio Header */
-        .section-tag {
-            color: var(--accent-cyan);
-            font-size: 0.75rem;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            margin-bottom: 0.5rem;
-        }
-
-        .section-title {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .section-desc {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            margin-bottom: 2rem;
-        }
-
-        .section-divider {
-            height: 1px;
-            background: var(--border-color);
-            margin-bottom: 3rem;
-        }
-
-        /* Projects Grid */
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-        }
-
-        .project-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            transition: border-color 0.2s;
-        }
-
-        .project-card:hover {
-            border-color: var(--border-hover);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .card-tag {
-            color: var(--text-secondary);
-            font-size: 0.75rem;
-        }
-
-        .status-badge {
-            background: rgba(0, 255, 102, 0.1);
-            color: var(--accent-green);
-            padding: 0.25rem 0.75rem;
-            border-radius: 99px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            text-transform: uppercase;
-            border: 1px solid rgba(0, 255, 102, 0.2);
-        }
-        
-        .status-badge.active-testing {
-            color: var(--accent-green);
-            background: rgba(0, 255, 102, 0.1);
-        }
-
-        .status-dot {
-            width: 6px;
-            height: 6px;
-            background-color: currentColor;
-            border-radius: 50%;
-            box-shadow: 0 0 6px currentColor;
-        }
-
-        .card-title {
-            font-size: 1.25rem;
-            margin-bottom: 1rem;
-        }
-
-        .card-desc {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 2rem;
-            flex-grow: 1;
-        }
-
-        .card-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .card-stack {
-            color: var(--text-secondary);
-            font-size: 0.75rem;
-        }
-
-        .card-link {
-            color: var(--text-primary);
-            text-decoration: none;
-            font-size: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        /* Footer Status Bar */
-        .footer-status {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1rem 1.5rem;
-            margin: 3rem 3rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.8rem;
-        }
-
-        .status-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: var(--text-primary);
-        }
-
-        .return-link {
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-        .return-link:hover { color: var(--text-primary); }
-
-    </style>
-</head>
-<body>
-
-    <div class="app-container">
-        
-        <!-- Left Vertical Sidebar -->
-        <div class="sidebar">
-            <div class="sidebar-text mono">BACKEND DEVELOPER</div>
-            <div class="sidebar-line"></div>
-            <div class="sidebar-year mono">2024</div>
+        <!-- Interactive Node Network Canvas (Full screen overlay) -->
+        <canvas id="nodeNetwork"></canvas>
+        <div id="jellyHint" class="jelly-hint">
+            [ Grab & throw me ]
+        </div>
+        <!-- Premium HTML Speech Bubble -->
+        <div id="jellySpeechBubble" class="jelly-speech-bubble">
+            He is handsome, right? 😉
         </div>
 
-        <!-- Main Content Area -->
-        <div class="main-area">
-            
-            <!-- Navbar -->
-            <nav class="navbar">
-                <div class="nav-logo">
-                    <!-- Abstract logo placeholder -->
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM11 19.93C7.05 19.43 4 16.05 4 12C4 7.95 7.05 4.57 11 4.07V19.93ZM13 4.07C16.95 4.57 20 7.95 20 12C20 16.05 16.95 19.43 13 19.93V4.07Z" fill="white"/>
+        <div class="hero-content-wrapper" style="position: relative; z-index: 1;">
+            <div class="hero-text-content">
+                <!-- We apply split-text to these lines via JS -->
+                <h1 class="hero-title" id="heroTitle">
+                    <span class="line split-target">CREATIVE</span>
+                    <span class="line split-target">BACKEND</span>
+                    <span class="line split-target">DEVELOPER</span>
+                </h1>
+                
+                <div class="hero-meta gsap-fade">
+                    <p>Python · Django · APIs · Architecture</p>
+                </div>
+            </div>
+
+            <div class="hero-center-graphic gsap-fade">
+                <!-- Reserved space for Jelly home -->
+            </div>
+
+            {% if settings.profile_photo %}
+            <div class="hero-image-wrapper gsap-fade">
+                <img src="{{ settings.profile_photo.url }}" alt="Profile Photo" class="hero-image">
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="hero-subtitle-area gsap-fade" style="position: relative; z-index: 1;">
+            <div class="hero-subtitle-text" id="typewriterText">
+                I build robust, scalable architectures for high-traffic applications.
+                Django · PostgreSQL · 1+ year · Backend Engineering.
+            </div>
+            <div>
+                <a href="#services" class="btn-secondary open-contact-modal">
+                    Work with me
+                    <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
                     </svg>
-                </div>
-                <div class="nav-links">
-                    <a href="#" class="nav-link">About Me</a>
-                    <a href="#" class="nav-link active">Portfolio</a>
-                    <a href="#" class="nav-link">Services</a>
-                </div>
-                <div class="nav-actions">
-                    <div class="theme-toggle">
-                        <span>☀️</span>
-                        <span class="active-mode">🌙</span>
-                    </div>
-                    <a href="#" class="btn-primary">Book A Call ↗</a>
-                </div>
-            </nav>
-
-            <div class="content-padding">
-                
-                <!-- Hero Section (Integrating the Photo) -->
-                <div class="hero-section">
-                    <div class="hero-image-container">
-                        <div class="hero-image-wrapper">
-                            <!-- Referencing the uploaded image in the static directory -->
-                            <img src="{% static 'portfolio/images/profile.jpg' %}" alt="Anuj Bashyal">
-                        </div>
-                        <!-- Floating Badges -->
-                        <div class="floating-badge badge-1 mono">&lt; Django /&gt;</div>
-                        <div class="floating-badge badge-2 mono">{ REST API }</div>
-                        <div class="floating-badge badge-3 mono">[ QA Automation ]</div>
-                    </div>
-                    <div class="hero-text">
-                        <h1 class="heading-font hacker-text">Hello — it's Anuj Bashyal, your code magician.</h1>
-                        <p>Architecting robust backends, flawless API integrations, and leading rigorous QA workflows.</p>
-                        <div class="mono" style="color: var(--accent-cyan); font-size: 0.85rem;">
-                            [ 2 / Project completed ] &nbsp;&nbsp; [ 2 / Product released ]
-                        </div>
-                </div>
-
-                <!-- Portfolio Section matching the UI image -->
-                <div class="section-tag mono">ENGINEERED SOLUTIONS</div>
-                <h2 class="section-title heading-font">Featured Backend Deployments</h2>
-                <p class="section-desc">Robust Django architectures, comprehensive QA testing workflows, and scalable API integrations.</p>
-                <div class="section-divider"></div>
-
-                <div class="projects-grid">
-                    
-                    {% for project in projects %}
-                    <div class="project-card">
-                        <div class="card-header mono">
-                            <span class="card-tag">{{ project.tag }}</span>
-                            <div class="status-badge">
-                                <span class="status-dot"></span> {{ project.status }}
-                            </div>
-                        </div>
-                        <h3 class="card-title heading-font">{{ project.title }}</h3>
-                        <p class="card-desc">{{ project.description }}</p>
-                        <div class="card-footer mono">
-                            <span class="card-stack">{{ project.tech_stack }}</span>
-                            <a href="#" class="card-link">Inspect Spec ↗</a>
-                        </div>
-                    </div>
-                    {% empty %}
-                    <!-- Fallback hardcoded projects if DB is empty -->
-                    <div class="project-card">
-                        <div class="card-header mono">
-                            <span class="card-tag">#001 // INTERNAL SYSTEMS</span>
-                            <div class="status-badge">
-                                <span class="status-dot"></span> DEPLOYED
-                            </div>
-                        </div>
-                        <h3 class="card-title heading-font">Employee Evaluation Platform</h3>
-                        <p class="card-desc">Architected the backend for a comprehensive employee evaluation system. Built with Django REST APIs, featuring custom database design, secure authentication, and seamless payment integration.</p>
-                        <div class="card-footer mono">
-                            <span class="card-stack">Django / REST API / Payments</span>
-                            <a href="#" class="card-link">Inspect Spec ↗</a>
-                        </div>
-                    </div>
-
-                    <div class="project-card">
-                        <div class="card-header mono">
-                            <span class="card-tag">#002 // QUALITY ASSURANCE</span>
-                            <div class="status-badge active-testing">
-                                <span class="status-dot"></span> ACTIVE TESTING
-                            </div>
-                        </div>
-                        <h3 class="card-title heading-font">E-Commerce E2E QA Workflows</h3>
-                        <p class="card-desc">Leading end-to-end QA testing across iOS and web platforms. Managing rigorous bug reporting and collaborating closely with developers to ensure robust, high-quality system stability.</p>
-                        <div class="card-footer mono">
-                            <span class="card-stack">iOS QA / Web QA / E2E Testing</span>
-                            <a href="#" class="card-link">Inspect Spec ↗</a>
-                        </div>
-                    </div>
-                    {% endfor %}
-
-                </div>
+                </a>
             </div>
-
-            <!-- Footer Status -->
-            <div class="footer-status mono">
-                <div class="status-left">
-                    <span class="status-dot" style="color: var(--accent-green);"></span>
-                    System Status: All E2E tests passing. Backend stability at 100%.
-                </div>
-                <a href="#" class="return-link">← Return to Hero</a>
-            </div>
-
         </div>
-    </div>
+    </section>
 
-    <!-- Hacker Text Effect Script -->
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const targetEl = document.querySelector('.hacker-text');
-            if (targetEl) {
-                const originalText = targetEl.innerText;
-                const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
-                let interval = null;
-                
-                function scramble() {
-                    let iteration = 0;
-                    clearInterval(interval);
-                    
-                    interval = setInterval(() => {
-                        targetEl.innerText = originalText
-                            .split("")
-                            .map((letter, index) => {
-                                if (index < iteration || letter === " ") {
-                                    return originalText[index];
-                                }
-                                return letters[Math.floor(Math.random() * letters.length)];
-                            })
-                            .join("");
-                        
-                        if (iteration >= originalText.length) { 
-                            clearInterval(interval);
-                        }
-                        iteration += 1 / 3; // Controls decoding speed
-                    }, 30);
+    <!-- Services Section -->
+    <section id="services" class="services-section">
+        {% if settings.api_service_image %}
+            <img id="apiHoverImage" src="{{ settings.api_service_image.url }}" class="service-hover-img" alt="Django REST">
+        {% endif %}
+        {% if settings.db_service_image %}
+            <img id="dbHoverImage" src="{{ settings.db_service_image.url }}" class="service-hover-img" alt="Databases">
+        {% endif %}
+
+        <div class="services-header gsap-fade">
+            <p class="section-mono-tag">[ Services ]</p>
+            <h2 class="section-huge-title">What I can <br>do for you</h2>
+            <p style="font-family: var(--font-mono); color: var(--text-dark); font-size: 1.4rem; text-transform: uppercase;">3 disciplines</p>
+        </div>
+
+        <div id="api-service-block" class="service-block gsap-fade" style="position: relative;">
+            <!-- Invisible trigger zone for the hover image -->
+            <div id="api-hover-trigger" style="position: absolute; right: 0; top: 0; bottom: 0; width: 45%; z-index: 5;"></div>
+            
+            <div class="service-meta" style="position: relative; z-index: 10;">
+                <div class="service-dot"></div>
+                <p class="section-mono-tag" style="color: var(--text-white);">API Architecture</p>
+            </div>
+            <h3 class="service-title">Robust APIs that scale effortlessly</h3>
+            <p class="service-desc">I engineer RESTful services with predictable latency, strict rate-limiting, and comprehensive fault isolation for enterprise applications.</p>
+            <div class="service-tags">
+                <span class="service-tag">Django REST</span>
+                <span class="service-tag">GraphQL</span>
+                <span class="service-tag">gRPC</span>
+                <span class="service-tag">Microservices</span>
+            </div>
+            <a href="#" class="btn-secondary open-contact-modal" style="width: max-content; margin-top: 2rem;">Start the project</a>
+        </div>
+
+        <div id="db-service-block" class="service-block gsap-fade" style="position: relative;">
+            <!-- Invisible trigger zone for the hover image -->
+            <div id="db-hover-trigger" style="position: absolute; right: 0; top: 0; bottom: 0; width: 45%; z-index: 5;"></div>
+            
+            <div class="service-meta" style="position: relative; z-index: 10;">
+                <div class="service-dot"></div>
+                <p class="section-mono-tag" style="color: var(--text-white);">Database Topology</p>
+            </div>
+            <h3 class="service-title" style="position: relative; z-index: 10;">The foundation of your application</h3>
+            <p class="service-desc" style="position: relative; z-index: 10;">Expertise in schema normalization, rigorous indexing audits, sharding strategies, and establishing high-availability read-replica clusters.</p>
+            <div class="service-tags" style="position: relative; z-index: 10;">
+                <span class="service-tag">PostgreSQL</span>
+                <span class="service-tag">Redis</span>
+                <span class="service-tag">Query Optimization</span>
+            </div>
+            <a href="#" class="btn-secondary open-contact-modal" style="width: max-content; margin-top: 2rem;">Start the project</a>
+        </div>
+
+        <div class="service-block gsap-fade">
+            <div class="service-meta">
+                <div class="service-dot"></div>
+                <p class="section-mono-tag" style="color: var(--text-white);">Cloud & DevOps</p>
+            </div>
+            <h3 class="service-title">Infrastructure that never sleeps</h3>
+            <p class="service-desc">Deploying scalable backend services using containerization, CI/CD pipelines, and cloud-native integrations for high-availability systems.</p>
+            <div class="service-tags">
+                <span class="service-tag">AWS</span>
+                <span class="service-tag">Docker</span>
+                <span class="service-tag">CI/CD</span>
+            </div>
+            <a href="#" class="btn-secondary open-contact-modal" style="width: max-content; margin-top: 2rem;">Start the project</a>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="portfolio" class="projects-section">
+        <div class="projects-table">
+            <div class="projects-header">
+                <p>No</p>
+                <p>Project</p>
+                <p style="text-align: right;">Status</p>
+            </div>
+
+            {% for project in projects %}
+            <div class="project-row gsap-fade">
+                <p class="project-number">0{{ forloop.counter }}</p>
+                <div class="project-details">
+                    <span class="project-name">{{ project.title }}</span>
+                    <p class="project-awards">{{ project.tag }} — {{ project.tech_stack }}</p>
+                </div>
+                <p class="project-year">{{ project.status }}</p>
+            </div>
+            {% empty %}
+            <!-- Fallback -->
+            <div class="project-row gsap-fade">
+                <p class="project-number">01</p>
+                <div class="project-details">
+                    <span class="project-name">Employee Evaluation Platform</span>
+                    <p class="project-awards">INTERNAL SYSTEMS — Django / REST API</p>
+                </div>
+                <p class="project-year">DEPLOYED</p>
+            </div>
+            <div class="project-row gsap-fade">
+                <p class="project-number">02</p>
+                <div class="project-details">
+                    <span class="project-name">E-Commerce E2E Workflows</span>
+                    <p class="project-awards">QUALITY ASSURANCE — iOS QA / Web QA</p>
+                </div>
+                <p class="project-year">ACTIVE TESTING</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Custom SplitText Logic for Hero Title
+    function splitTextIntoSpans(selector) {
+        const elements = document.querySelectorAll(selector);
+        elements.forEach(el => {
+            const text = el.textContent.trim();
+            el.innerHTML = '';
+            // Split by characters
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                const span = document.createElement('span');
+                span.classList.add('char');
+                if (char === ' ') {
+                    span.innerHTML = '&nbsp;';
+                } else {
+                    span.textContent = char;
                 }
-                
-                scramble(); // run on load
-                targetEl.addEventListener("mouseover", scramble); // run on hover
+                el.appendChild(span);
             }
         });
-    </script>
-</body>
-</html>
+    }
+
+    // Prepare Hero Text
+    splitTextIntoSpans('.split-target');
+
+    // Typewriter Logic for Subtitle
+    function initTypewriter(selector) {
+        const el = document.querySelector(selector);
+        if (!el) return;
+        const text = el.textContent;
+        el.innerHTML = '';
+        
+        const trimmedLines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+        trimmedLines.forEach((line, index) => {
+            for(let i = 0; i < line.length; i++) {
+                const span = document.createElement('span');
+                span.classList.add('type-char');
+                span.style.opacity = 0;
+                span.innerHTML = line[i] === ' ' ? '&nbsp;' : line[i];
+                el.appendChild(span);
+            }
+            if (index < trimmedLines.length - 1) {
+                el.appendChild(document.createElement('br'));
+            }
+        });
+    }
+    
+    initTypewriter('#typewriterText');
+
+    // Run animation when preloader finishes
+    window.addEventListener('preloaderDone', () => {
+        const tl = gsap.timeline();
+
+        // Animate characters up
+        tl.to(".char", {
+            y: "0%",
+            duration: 1.2,
+            stagger: 0.04,
+            ease: "power4.out"
+        })
+        
+        // Fade in meta and subtitle container
+        .to(".gsap-fade", {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            stagger: 0.1,
+            ease: "power3.out",
+            onComplete: initHoverEffects // Attach hover listeners after entry
+        }, "-=0.8")
+        
+        // Run typewriter effect character by character
+        .to(".type-char", {
+            opacity: 1,
+            duration: 0.01,
+            stagger: 0.025, // 25ms per character
+            ease: "none"
+        }, "-=0.4");
+    });
+    // Eye-catching 3D Hover Effects
+    function initHoverEffects() {
+        document.querySelectorAll('.char').forEach(char => {
+            if (char.innerText.trim() !== '') {
+                char.addEventListener('mouseenter', () => {
+                    gsap.to(char, {
+                        scale: 1.25,
+                        color: "var(--accent-yellow)",
+                        y: -15,
+                        rotationY: gsap.utils.random(-30, 30),
+                        rotationX: gsap.utils.random(-20, 20),
+                        duration: 0.4,
+                        ease: "back.out(2)"
+                    });
+                });
+                
+                char.addEventListener('mouseleave', () => {
+                    gsap.to(char, {
+                        scale: 1,
+                        color: "var(--text-white)",
+                        y: 0,
+                        rotationY: 0,
+                        rotationX: 0,
+                        duration: 0.6,
+                        ease: "power3.out"
+                    });
+                });
+            }
+        });
+    }
+
+    // Scroll Animations for rest of the page
+    gsap.utils.toArray(".services-section .gsap-fade, .projects-section .gsap-fade").forEach(element => {
+        gsap.to(element, {
+            scrollTrigger: {
+                trigger: element,
+                start: "top 90%", // Reveal when element is 90% down the viewport
+                toggleActions: "play none none none"
+            },
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: "power3.out"
+        });
+    });
+
+    // Image Hover Follow Effect for API Block (Confined to right side gap)
+    const apiHoverTrigger = document.getElementById('api-hover-trigger');
+    const apiHoverImg = document.getElementById('apiHoverImage');
+    
+    if (apiHoverTrigger && apiHoverImg) {
+        gsap.set(apiHoverImg, { xPercent: -50, yPercent: -50, scale: 0.5, opacity: 0 });
+        
+        let xTo = gsap.quickTo(apiHoverImg, "x", {duration: 0.6, ease: "power3"});
+        let yTo = gsap.quickTo(apiHoverImg, "y", {duration: 0.6, ease: "power3"});
+
+        apiHoverTrigger.addEventListener('mouseenter', (e) => {
+            xTo(e.clientX);
+            yTo(e.clientY);
+            gsap.to(apiHoverImg, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.5)", overwrite: "auto" });
+        });
+        
+        apiHoverTrigger.addEventListener('mousemove', (e) => {
+            xTo(e.clientX);
+            yTo(e.clientY);
+        });
+        
+        apiHoverTrigger.addEventListener('mouseleave', () => {
+            gsap.to(apiHoverImg, { scale: 0.5, opacity: 0, duration: 0.4, ease: "power3.in", overwrite: "auto" });
+        });
+    }
+
+    // Image Hover Follow Effect for DB Block
+    const dbHoverTrigger = document.getElementById('db-hover-trigger');
+    const dbHoverImg = document.getElementById('dbHoverImage');
+    
+    if (dbHoverTrigger && dbHoverImg) {
+        gsap.set(dbHoverImg, { xPercent: -50, yPercent: -50, scale: 0.5, opacity: 0 });
+        
+        let xToDB = gsap.quickTo(dbHoverImg, "x", {duration: 0.6, ease: "power3"});
+        let yToDB = gsap.quickTo(dbHoverImg, "y", {duration: 0.6, ease: "power3"});
+
+        dbHoverTrigger.addEventListener('mouseenter', (e) => {
+            xToDB(e.clientX);
+            yToDB(e.clientY);
+            gsap.to(dbHoverImg, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.5)", overwrite: "auto" });
+        });
+        
+        dbHoverTrigger.addEventListener('mousemove', (e) => {
+            xToDB(e.clientX);
+            yToDB(e.clientY);
+        });
+        
+        dbHoverTrigger.addEventListener('mouseleave', () => {
+            gsap.to(dbHoverImg, { scale: 0.5, opacity: 0, duration: 0.4, ease: "power3.in", overwrite: "auto" });
+        });
+    }
+
+    // Ultimate Soft Body Physics "Jelly Pet" Toy
+    const canvas = document.getElementById('nodeNetwork');
+    const ctx = canvas.getContext('2d');
+    const heroSection = document.querySelector('.hero-section');
+    const centerGraphic = document.querySelector('.hero-center-graphic');
+    
+    let homeX = 0, homeY = 0;
+
+    function resizeCanvas() {
+        canvas.width = heroSection.offsetWidth;
+        canvas.height = heroSection.offsetHeight;
+        
+        if (centerGraphic) {
+            let heroRect = heroSection.getBoundingClientRect();
+            let cgRect = centerGraphic.getBoundingClientRect();
+            if (cgRect.width === 0) {
+                homeX = canvas.width / 2;
+                homeY = canvas.height / 2;
+            } else {
+                homeX = (cgRect.left - heroRect.left) + cgRect.width / 2;
+                homeY = (cgRect.top - heroRect.top) + cgRect.height / 2;
+            }
+        } else {
+            homeX = canvas.width / 2;
+            homeY = canvas.height / 2;
+        }
+    }
+    
+    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('load', resizeCanvas);
+    window.addEventListener('preloaderDone', resizeCanvas);
+    resizeCanvas();
+
+    // Physics constants
+    const GRAVITY = 0.8;
+    const BOUNCE = 0.7;
+    const FRICTION = 0.98;
+    const SPRING_K = 0.15; // Spring stiffness
+    const SPRING_DAMP = 0.75; // Spring damping
+    const NUM_POINTS = 24;
+    const RADIUS = 70;
+
+    let points = [];
+    let center = { x: homeX, y: -100, vx: 0, vy: 0 }; // Drops from top initially
+    
+    let mouse = { x: homeX, y: homeY, isDown: false, isDragging: false };
+    let isHoveringPhoto = false;
+
+    // State Machine for Throwing
+    let jellyState = 'thrown'; // Start thrown so it falls in!
+    let returnTimeout = setTimeout(() => { jellyState = 'returning'; }, 2000);
+
+    window.addEventListener('mousemove', (e) => {
+        const rect = heroSection.getBoundingClientRect();
+        mouse.x = e.clientX - rect.left;
+        mouse.y = e.clientY - rect.top;
+        
+        // Dynamic cursor logic
+        let dx = mouse.x - center.x;
+        let dy = mouse.y - center.y;
+        if (Math.sqrt(dx*dx + dy*dy) < RADIUS * 1.2) {
+            document.body.style.cursor = mouse.isDragging ? 'grabbing' : 'grab';
+        } else {
+            document.body.style.cursor = 'default';
+        }
+    });
+
+    // Add listeners for the profile photo
+    const profileImage = document.querySelector('.hero-image');
+    if (profileImage) {
+        profileImage.addEventListener('mouseenter', () => isHoveringPhoto = true);
+        profileImage.addEventListener('mouseleave', () => isHoveringPhoto = false);
+    }
+
+    // We must listen on window for mousedown to catch it anywhere
+    window.addEventListener('mousedown', (e) => {
+        let dx = mouse.x - center.x;
+        let dy = mouse.y - center.y;
+        if (Math.sqrt(dx*dx + dy*dy) < RADIUS * 1.2) {
+            mouse.isDragging = true;
+            jellyState = 'drag';
+            clearTimeout(returnTimeout);
+            
+            document.body.style.cursor = 'grabbing';
+            // Prevent text selection if not clicking a link
+            if (e.target.tagName !== 'A' && e.target.tagName !== 'BUTTON') {
+                e.preventDefault(); 
+            }
+        } else if (mouse.y > 0 && mouse.y < canvas.height && mouse.x > 0 && mouse.x < canvas.width) {
+            // Poke the glass
+            center.vy = -18; 
+            center.vx = (center.x - mouse.x) * 0.15; 
+            
+            jellyState = 'thrown';
+            clearTimeout(returnTimeout);
+            returnTimeout = setTimeout(() => {
+                if (jellyState === 'thrown') jellyState = 'returning';
+            }, 3000);
+        }
+        mouse.isDown = true;
+    });
+
+    window.addEventListener('mouseup', () => {
+        mouse.isDown = false;
+        if (mouse.isDragging) {
+            jellyState = 'thrown';
+            clearTimeout(returnTimeout);
+            returnTimeout = setTimeout(() => {
+                if (jellyState === 'thrown') jellyState = 'returning';
+            }, 3000);
+        }
+        mouse.isDragging = false;
+        let dx = mouse.x - center.x;
+        let dy = mouse.y - center.y;
+        if (Math.sqrt(dx*dx + dy*dy) < RADIUS * 1.2) {
+            document.body.style.cursor = 'grab';
+        } else {
+            document.body.style.cursor = 'default';
+        }
+    });
+
+    class Point {
+        constructor(angle) {
+            this.angle = angle;
+            this.x = center.x + Math.cos(angle) * RADIUS;
+            this.y = center.y + Math.sin(angle) * RADIUS;
+            this.vx = 0;
+            this.vy = 0;
+        }
+        
+        update() {
+            this.vy += GRAVITY;
+            this.vx *= FRICTION;
+            this.vy *= FRICTION;
+            
+            this.x += this.vx;
+            this.y += this.vy;
+            
+            // Soft body boundaries (Floor & Walls)
+            if (this.x < 0) { this.x = 0; this.vx *= -BOUNCE; }
+            if (this.x > canvas.width) { this.x = canvas.width; this.vx *= -BOUNCE; }
+            if (this.y < 0) { this.y = 0; this.vy *= -BOUNCE; }
+            if (this.y > canvas.height) { this.y = canvas.height; this.vy *= -BOUNCE; }
+        }
+    }
+
+    for (let i = 0; i < NUM_POINTS; i++) {
+        points.push(new Point((i / NUM_POINTS) * Math.PI * 2));
+    }
+
+    function animateBlob() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // 1. Update Core Center Physics State Machine
+        if (jellyState === 'drag') {
+            center.vx = (mouse.x - center.x) * 0.3;
+            center.vy = (mouse.y - center.y) * 0.3;
+            center.x += center.vx;
+            center.y += center.vy;
+        } else if (jellyState === 'thrown') {
+            // Free gravity and bouncing
+            center.vy += GRAVITY;
+            center.vx *= FRICTION;
+            center.vy *= FRICTION;
+            center.x += center.vx;
+            center.y += center.vy;
+            
+            // Check if settled on the floor
+            let speed = Math.sqrt(center.vx*center.vx + center.vy*center.vy);
+            if (center.y > canvas.height - RADIUS - 10 && speed < 0.5) {
+                jellyState = 'returning';
+            }
+        } else if (jellyState === 'returning') {
+            // Slow, floaty, dream-like glide back to home
+            let dx = homeX - center.x;
+            let dy = homeY - center.y;
+            
+            let lerpFactor = 0.02; // Very slow and controlled
+            center.vx = dx * lerpFactor;
+            center.vy = dy * lerpFactor;
+            
+            center.x += center.vx;
+            center.y += center.vy;
+            
+            if (Math.abs(dx) < 3 && Math.abs(dy) < 3) {
+                jellyState = 'home';
+            }
+        } else if (jellyState === 'home') {
+            // Gentle bouncy spring around home
+            let dx = homeX - center.x;
+            let dy = homeY - center.y;
+            
+            center.vx += dx * 0.04; 
+            center.vy += dy * 0.04;
+            center.vx *= 0.92;
+            center.vy *= 0.92;
+            center.vy += GRAVITY * 0.4; // Organic sag
+            
+            center.x += center.vx;
+            center.y += center.vy;
+        }
+        
+        // Global Bounds (always apply)
+        if (jellyState !== 'drag') {
+            let limit = RADIUS * 0.6;
+            if (center.x < limit) { center.x = limit; center.vx *= -BOUNCE; }
+            if (center.x > canvas.width - limit) { center.x = canvas.width - limit; center.vx *= -BOUNCE; }
+            if (center.y < limit) { center.y = limit; center.vy *= -BOUNCE; }
+            if (center.y > canvas.height - limit) { center.y = canvas.height - limit; center.vy *= -BOUNCE; }
+        }
+        
+        // 2. Spring Physics: Center to Rim
+        points.forEach((p) => {
+            let idealX = center.x + Math.cos(p.angle) * RADIUS;
+            let idealY = center.y + Math.sin(p.angle) * RADIUS;
+            
+            p.vx += (idealX - p.x) * SPRING_K;
+            p.vy += (idealY - p.y) * SPRING_K;
+            
+            p.vx *= SPRING_DAMP;
+            p.vy *= SPRING_DAMP;
+        });
+
+        // 3. Update Rim points
+        points.forEach(p => p.update());
+
+        // 4. Render Blob
+        let grad = ctx.createLinearGradient(0, 0, 320, 320);
+        grad.addColorStop(0, '#FFD900'); 
+        grad.addColorStop(1, '#FF5E00'); 
+        
+        ctx.beginPath();
+        let firstMidX = (points[0].x + points[NUM_POINTS - 1].x) / 2;
+        let firstMidY = (points[0].y + points[NUM_POINTS - 1].y) / 2;
+        ctx.moveTo(firstMidX, firstMidY);
+        
+        for (let i = 0; i < NUM_POINTS; i++) {
+            let p1 = points[i];
+            let p2 = points[(i + 1) % NUM_POINTS];
+            let mx = (p1.x + p2.x) / 2;
+            let my = (p1.y + p2.y) / 2;
+            ctx.quadraticCurveTo(p1.x, p1.y, mx, my);
+        }
+        
+        ctx.fillStyle = grad;
+        ctx.shadowColor = 'rgba(255, 217, 0, 0.4)';
+        ctx.shadowBlur = 20;
+        ctx.shadowOffsetY = 10;
+        ctx.fill();
+
+        // 5. Render Eyes
+        let eyeOffsetX = center.vx * 0.2;
+        let eyeOffsetY = center.vy * 0.2;
+        
+        if (mouse.isDragging) {
+            // Squinting eyes when grabbed and thrown
+            ctx.fillStyle = '#fff';
+            ctx.beginPath(); ctx.arc(center.x - 20 + eyeOffsetX, center.y - 10 + eyeOffsetY, 6, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(center.x + 20 + eyeOffsetX, center.y - 10 + eyeOffsetY, 6, 0, Math.PI*2); ctx.fill();
+            
+            // Surprised mouth
+            ctx.beginPath(); ctx.arc(center.x + eyeOffsetX, center.y + 10 + eyeOffsetY, 4, 0, Math.PI*2); ctx.fill();
+        } else if (isHoveringPhoto) {
+            // Heart Eyes! (Beating animation)
+            let beatScale = 1 + Math.max(0, Math.sin(Date.now() / 120)) * 0.25;
+            let size = 12 * beatScale;
+
+            ctx.fillStyle = '#FF2E63'; // Vibrant pink/red
+            
+            function drawHeart(cx, cy) {
+                ctx.beginPath();
+                ctx.moveTo(cx, cy + size * 0.5); // Bottom point
+                ctx.bezierCurveTo(cx - size * 1.2, cy - size * 0.1, cx - size * 1.2, cy - size * 1.2, cx - size * 0.4, cy - size * 1.2); // Left lobe
+                ctx.bezierCurveTo(cx, cy - size * 1.2, cx, cy - size * 0.4, cx, cy - size * 0.4); // Dip
+                ctx.bezierCurveTo(cx, cy - size * 1.2, cx + size * 0.4, cy - size * 1.2, cx + size * 1.2, cy - size * 1.2); // Right dip
+                ctx.bezierCurveTo(cx + size * 1.2, cy - size * 0.1, cx, cy + size * 0.5, cx, cy + size * 0.5); // Right lobe
+                ctx.fill();
+            }
+
+            // Draw the two beating hearts
+            drawHeart(center.x - 18 + eyeOffsetX, center.y - 4 + eyeOffsetY);
+            drawHeart(center.x + 18 + eyeOffsetX, center.y - 4 + eyeOffsetY);
+
+            // Tiny cute 'o' mouth (mesmerized)
+            ctx.fillStyle = '#fff';
+            ctx.beginPath();
+            ctx.arc(center.x + eyeOffsetX, center.y + 10 + eyeOffsetY, 3, 0, Math.PI*2);
+            ctx.fill();
+        } else {
+            // Wide eye whites
+            ctx.fillStyle = '#fff';
+            ctx.beginPath(); ctx.arc(center.x - 20 + eyeOffsetX, center.y - 5 + eyeOffsetY, 12, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(center.x + 20 + eyeOffsetX, center.y - 5 + eyeOffsetY, 12, 0, Math.PI*2); ctx.fill();
+            
+            // Pupils that track the mouse!
+            let lookDx = mouse.x - center.x;
+            let lookDy = mouse.y - center.y;
+            
+            let lookDist = Math.sqrt(lookDx*lookDx + lookDy*lookDy) + 1;
+            let px = (lookDx / lookDist) * 5;
+            let py = (lookDy / lookDist) * 5;
+            
+            ctx.fillStyle = '#121110';
+            ctx.beginPath(); ctx.arc(center.x - 20 + eyeOffsetX + px, center.y - 5 + eyeOffsetY + py, 5, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(center.x + 20 + eyeOffsetX + px, center.y - 5 + eyeOffsetY + py, 5, 0, Math.PI*2); ctx.fill();
+        }
+
+        // 6. Speech Bubble Logic (HTML tracking)
+        const speechBubble = document.getElementById('jellySpeechBubble');
+        
+        if (isHoveringPhoto) {
+            if (!speechBubble.classList.contains('active')) {
+                speechBubble.classList.add('active');
+            }
+            speechBubble.style.left = `${center.x}px`;
+            speechBubble.style.top = `${center.y - RADIUS - 15}px`;
+        } else {
+            if (speechBubble.classList.contains('active')) {
+                speechBubble.classList.remove('active');
+            }
+        }
+
+        // 7. Hint Text Logic (HTML tracking)
+        const jellyHint = document.getElementById('jellyHint');
+        if (jellyHint) {
+            jellyHint.style.left = `${homeX}px`;
+            jellyHint.style.top = `${homeY + RADIUS + 15}px`;
+            
+            // Hide if dragged, thrown, or mouse is near jelly
+            let hdx = mouse.x - center.x;
+            let hdy = mouse.y - center.y;
+            let isHovered = Math.sqrt(hdx*hdx + hdy*hdy) < RADIUS * 1.5;
+            
+            if (jellyState !== 'home' || isHovered) {
+                jellyHint.style.opacity = '0';
+            } else {
+                jellyHint.style.opacity = '0.6';
+            }
+        }
+
+        requestAnimationFrame(animateBlob);
+    }
+    
+    // Start animation only after preloader finishes
+    window.addEventListener('preloaderDone', () => {
+        animateBlob();
+    });
+
+</script>
+{% endblock %}

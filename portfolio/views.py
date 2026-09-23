@@ -6,24 +6,14 @@ from django.conf import settings
 import json
 from .models import Project, PortfolioSettings, ContactRequest
 
-class AboutView(TemplateView):
-    template_name = 'portfolio/about.html'
+class HomeView(TemplateView):
+    template_name = 'portfolio/index.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['settings'] = PortfolioSettings.objects.first()
+        context['projects'] = Project.objects.all().order_by('order')
         return context
-
-class PortfolioIndexView(ListView):
-    model = Project
-    template_name = 'portfolio/portfolio.html'
-    context_object_name = 'projects'
-    
-    def get_queryset(self):
-        return Project.objects.all().order_by('order')
-
-class ServicesView(TemplateView):
-    template_name = 'portfolio/services.html'
 
 class ContactSubmitView(View):
     def post(self, request, *args, **kwargs):

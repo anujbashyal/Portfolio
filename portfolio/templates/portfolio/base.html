@@ -1,709 +1,510 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anuj Bashyal | Backend Developer</title>
-    <!-- Typography -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+    <title>Anuj Bashyal — Backend Developer</title>
+    <!-- Typography: Oswald for display, Manrope for body, JetBrains Mono for tech text -->
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Manrope:wght@400;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg-outer: #0a0d12;
-            --bg-inner: #11141a;
-            --bg-card: #161b22;
-            --text-primary: #ffffff;
-            --text-secondary: #8b949e;
-            --accent-cyan: #06b6d4;
-            --accent-green: #00ff66;
-            --border-color: rgba(255, 255, 255, 0.08);
-            --border-hover: rgba(255, 255, 255, 0.15);
-        }
-
-        [data-theme="light"] {
-            --bg-outer: #f8fafc;
-            --bg-inner: #ffffff;
-            --bg-card: #f1f5f9;
-            --text-primary: #0f172a;
-            --text-secondary: #475569;
-            --accent-cyan: #0891b2;
-            --accent-green: #059669;
-            --border-color: rgba(0, 0, 0, 0.1);
-            --border-hover: rgba(5, 150, 105, 0.4);
+            --bg-color: #121110;
+            --accent-yellow: #FFD900;
+            --text-white: #E8E6E2;
+            --text-gray: #ABA7A0;
+            --text-dark: #6B6762;
+            --border-color: #4F4B46;
+            
+            --font-display: 'Oswald', sans-serif;
+            --font-body: 'Manrope', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            
+            --padding-x: clamp(1.5rem, 4vw, 4rem);
+            --header-height: 80px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
+        html { 
+            scroll-behavior: auto; /* Handled by Lenis */
+            font-size: 62.5%; /* 1rem = 10px */
+        }
+
         body {
-            background-color: var(--bg-outer);
-            color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-            margin: 0;
-            padding: 0;
-            line-height: 1.6;
-            transition: background-color 0.3s, color 0.3s;
+            background-color: var(--bg-color);
+            color: var(--text-white);
+            font-family: var(--font-body);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            font-size: 1.6rem;
         }
 
-        .mono { font-family: 'JetBrains Mono', monospace; }
-        .heading-font { font-family: 'Plus Jakarta Sans', sans-serif; }
+        /* Preloader */
+        .preloader {
+            position: fixed;
+            inset: 0;
+            background-color: var(--bg-color);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            padding: var(--padding-x);
+            transition: opacity 0.8s ease;
+        }
 
-        /* App Layout Container */
-        .app-container {
+        .preloader-text {
+            font-family: var(--font-mono);
+            font-size: 1.2rem;
+            color: var(--text-white);
+        }
+
+        .cursor-blink {
+            display: inline-block;
+            width: 0.6em;
+            height: 1em;
+            vertical-align: text-bottom;
+            background-color: var(--accent-yellow);
+            animation: blink 1s steps(1) infinite;
+        }
+
+        @keyframes blink {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0; }
+        }
+
+        /* Top Navigation */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            height: 100%;
-            display: grid;
-            grid-template-columns: 80px 1fr;
-            transition: background-color 0.3s, border-color 0.3s;
+            height: var(--header-height);
+            z-index: 1000;
+            background: rgba(18, 17, 16, 0.85);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.3s ease;
         }
 
-        /* Left Sidebar */
-        .sidebar {
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            padding: 4rem 0;
-            position: relative;
-        }
-        
-        .sidebar-text {
-            writing-mode: vertical-rl;
-            transform: rotate(180deg);
-            color: var(--text-secondary);
-            font-size: 0.75rem;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-        }
-
-        .sidebar-line {
-            width: 1px;
-            height: 100px;
-            background-color: var(--border-color);
-            margin: 2rem 0;
-        }
-
-        .sidebar-year {
-            color: var(--text-secondary);
-            font-size: 0.75rem;
-            letter-spacing: 0.1em;
-        }
-
-        /* Main Content Area */
-        .main-area {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* Navbar */
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 2rem 3rem;
+        header.scrolled {
             border-bottom: 1px solid var(--border-color);
+        }
+
+        .nav-inner {
+            height: 100%;
+            padding: 0 var(--padding-x);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .nav-logo {
             display: flex;
             align-items: center;
-            color: var(--text-primary);
-            perspective: 800px;
-        }
-
-        .logo-ab {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-weight: 700;
-            font-size: 1.6rem;
-            letter-spacing: -1px;
-            color: var(--text-primary);
+            gap: 1rem;
             text-decoration: none;
-            display: inline-block;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transform-style: preserve-3d;
-            animation: float-3d 4s ease-in-out infinite;
         }
 
-        .logo-ab span {
-            color: var(--accent-cyan);
-            font-size: 2rem;
-            line-height: 0;
-            margin-left: 2px;
-            display: inline-block;
-            animation: pulse-dot 1s ease-in-out infinite alternate;
+        .logo-circle {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background-color: var(--accent-yellow);
         }
 
-        .logo-ab:hover {
-            animation-play-state: paused;
-            transform: translateZ(50px) scale(1.1);
-            text-shadow: 0 0 30px rgba(6, 182, 212, 0.8);
-        }
-
-        @keyframes float-3d {
-            0%, 100% {
-                transform: translateZ(0px) rotateX(0deg) rotateY(0deg);
-                text-shadow: 0 5px 15px rgba(6, 182, 212, 0);
-            }
-            25% {
-                transform: translateZ(25px) rotateX(15deg) rotateY(25deg);
-                text-shadow: -15px 20px 25px rgba(6, 182, 212, 0.4);
-            }
-            50% {
-                transform: translateZ(50px) rotateX(0deg) rotateY(0deg);
-                text-shadow: 0 30px 40px rgba(6, 182, 212, 0.6);
-            }
-            75% {
-                transform: translateZ(25px) rotateX(-15deg) rotateY(-25deg);
-                text-shadow: 15px 20px 25px rgba(6, 182, 212, 0.4);
-            }
-        }
-
-        @keyframes pulse-dot {
-            0% { 
-                text-shadow: 0 0 5px rgba(6, 182, 212, 0.2);
-                color: var(--accent-cyan);
-            }
-            100% { 
-                text-shadow: 0 0 25px rgba(6, 182, 212, 1), 0 0 40px rgba(0, 255, 102, 0.8);
-                color: #ffffff;
-            }
+        .logo-text {
+            font-family: var(--font-mono);
+            color: var(--text-white);
+            font-size: 1.4rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: -0.01em;
         }
 
         .nav-links {
             display: flex;
-            gap: 2rem;
+            height: 100%;
             align-items: center;
         }
 
         .nav-link {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.95rem;
+            font-family: var(--font-mono);
+            color: var(--text-white);
+            font-size: 1.4rem;
             font-weight: 500;
-            position: relative;
-            padding: 0.6rem 1.2rem;
-            border-radius: 99px;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            background: transparent;
-            border: 1px solid transparent;
+            text-transform: uppercase;
+            text-decoration: none;
+            padding: 0 1.5rem;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s ease;
         }
 
         .nav-link:hover {
-            color: var(--text-primary);
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-            transform: translateY(-2px);
+            color: var(--accent-yellow);
         }
 
-        .nav-link.active {
-            color: var(--text-primary);
-            background: rgba(6, 182, 212, 0.1);
-            border: 1px solid rgba(6, 182, 212, 0.3);
-            box-shadow: 0 0 20px rgba(6, 182, 212, 0.15), inset 0 0 10px rgba(6, 182, 212, 0.05);
-        }
-
-        [data-theme="light"] .nav-link:hover {
-            background: rgba(0, 0, 0, 0.03);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        }
-
-        [data-theme="light"] .nav-link.active {
-            background: rgba(8, 145, 178, 0.08);
-            border: 1px solid rgba(8, 145, 178, 0.2);
-            box-shadow: 0 0 15px rgba(8, 145, 178, 0.1);
-            color: var(--accent-cyan);
-        }
-
-        .nav-actions {
+        .nav-right-info {
             display: flex;
             align-items: center;
-            gap: 1.5rem;
+            padding-left: 2.4rem;
         }
 
-        .theme-toggle {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-color);
-            border-radius: 99px;
-            padding: 0.25rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-        }
-        [data-theme="light"] .theme-toggle {
-            background: rgba(0, 0, 0, 0.05);
-        }
-        .theme-toggle span {
-            width: 20px; height: 20px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-            transition: all 0.2s;
-        }
-        .theme-toggle .active-mode {
-            background: var(--accent-cyan);
-            color: #fff;
+        .nav-right-text {
+            font-family: var(--font-mono);
+            color: var(--text-dark);
+            font-size: 1.4rem;
+            text-transform: uppercase;
         }
 
-        .btn-primary {
-            background: var(--text-primary);
-            color: var(--bg-outer);
-            text-decoration: none;
-            padding: 0.7rem 1.5rem;
-            border-radius: 99px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: opacity 0.2s;
-            cursor: pointer;
-            border: none;
-        }
-        .btn-primary:hover { opacity: 0.9; }
-        
-        /* Content Padding */
-        .content-padding {
-            padding: 2rem 3rem;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
+        .nav-right-text span {
+            color: var(--accent-yellow);
         }
 
-        .content-padding::-webkit-scrollbar {
-            display: none; /* Chrome/Safari/Opera */
-        }
-        
-        /* Contact Modal */
+        /* Modal Background */
         .contact-modal {
             display: none;
             position: fixed;
             inset: 0;
             z-index: 9999;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(10px);
+            background: rgba(18, 17, 16, 0.95);
+            backdrop-filter: blur(8px);
             align-items: center;
             justify-content: center;
             opacity: 0;
-            transition: opacity 0.3s;
+            transition: opacity 0.3s ease;
         }
         
         .contact-modal.is-active {
             display: flex;
             opacity: 1;
         }
-        
-        .contact-modal-content {
-            background: none;
-            border: none;
-            padding: 0;
-            width: 90%;
+
+        .modal-content {
+            background: transparent;
+            width: 100%;
             max-width: 500px;
+            padding: 2.5rem;
             position: relative;
-            transform: scale(0.9);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-sizing: border-box;
-        }
-        
-        .contact-modal.is-active .contact-modal-content {
-            transform: scale(1);
+            border: 1px solid var(--border-color);
+            transform: scale(0.95) translateY(10px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* 3D Scene Wrapper */
-        .modal-3d-scene {
-            perspective: 1200px;
-            width: 100%;
+        .contact-modal.is-active .modal-content {
+            transform: scale(1) translateY(0);
+            opacity: 1;
         }
-        
-        .modal-3d-wrapper {
-            width: 100%;
-            position: relative;
-            transition: transform 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transform-style: preserve-3d;
-        }
-        
-        .modal-3d-wrapper.is-flipped {
-            transform: rotateY(180deg);
-        }
-        
-        .modal-face {
-            width: 100%;
-            backface-visibility: hidden;
-            background: var(--bg-inner);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 3rem;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-            box-sizing: border-box;
-        }
-        
-        .modal-front {
-            position: relative;
-            z-index: 2;
-        }
-        
-        .modal-back {
-            transform: rotateY(180deg);
-            position: absolute;
-            top: 0; left: 0; height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        
+
         .close-modal {
             position: absolute;
-            top: 1rem;
+            top: 1.5rem;
             right: 1.5rem;
-            background: none;
+            background: transparent;
             border: none;
-            color: var(--text-secondary);
+            color: var(--text-dark);
             font-size: 2rem;
             cursor: pointer;
             transition: color 0.2s;
-            z-index: 10;
+            font-family: var(--font-mono);
         }
-        
+
         .close-modal:hover {
-            color: var(--text-primary);
+            color: var(--accent-yellow);
         }
-        
+
+        .modal-header h2 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-white);
+            font-family: var(--font-display);
+            text-transform: uppercase;
+        }
+
+        .modal-header p {
+            color: var(--text-gray);
+            font-size: 1.4rem;
+            margin-bottom: 2rem;
+            font-family: var(--font-mono);
+        }
+
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
         }
-        
+
         .form-group label {
             display: block;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
+            font-size: 1.2rem;
+            color: var(--text-dark);
             margin-bottom: 0.5rem;
-            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-family: var(--font-mono);
         }
-        
+
         .form-group input, .form-group textarea, .form-group select {
             width: 100%;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 0.75rem 1rem;
-            color: var(--text-primary);
-            font-family: inherit;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            box-sizing: border-box;
-            appearance: none;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            color: var(--text-white);
+            font-family: var(--font-mono);
+            font-size: 1.4rem;
+            transition: border-color 0.2s;
         }
-        
+
         .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
             outline: none;
-            border-color: var(--accent-cyan);
-            box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
+            border-bottom-color: var(--accent-yellow);
         }
 
-        .phone-input-wrapper {
-            display: flex;
-            gap: 0.5rem;
-        }
-        
-        .phone-input-wrapper select {
-            width: 35%;
+        .submit-btn {
+            background: transparent;
+            color: var(--accent-yellow);
+            border: 1px solid var(--accent-yellow);
+            padding: 1rem 2rem;
+            font-size: 1.4rem;
+            font-family: var(--font-mono);
+            text-transform: uppercase;
             cursor: pointer;
-        }
-        
-        .phone-input-wrapper input {
-            width: 65%;
-        }
-        
-        /* Beautiful 3D Success Checkmark / Text */
-        .success-icon-3d {
-            font-size: 5rem;
-            margin-bottom: 1rem;
-            animation: float-3d 3s ease-in-out infinite, glow-pulse 2s infinite alternate;
-            text-shadow: 0 10px 30px rgba(6, 182, 212, 0.6);
+            transition: all 0.2s;
         }
 
-        .success-text-3d {
-            font-size: 3rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-green));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .submit-btn:hover {
+            background: var(--accent-yellow);
+            color: var(--bg-color);
+        }
+
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 2rem 0;
+        }
+        .success-message h3 {
+            color: var(--accent-yellow);
+            font-size: 2.5rem;
             margin-bottom: 0.5rem;
-            transform: translateZ(50px);
+            font-family: var(--font-display);
+            text-transform: uppercase;
         }
 
-        @keyframes float-3d {
-            0%, 100% { transform: translateY(0) translateZ(60px) rotateX(10deg); }
-            50% { transform: translateY(-15px) translateZ(60px) rotateX(-5deg) rotateY(10deg); }
+        @media (max-width: 768px) {
+            .nav-links, .nav-right-info {
+                display: none;
+            }
         }
-
-        @keyframes glow-pulse {
-            0% { filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.4)); }
-            100% { filter: drop-shadow(0 0 30px rgba(16, 185, 129, 0.8)); }
-        }
-        
-        {% block extra_css %}{% endblock %}
-
     </style>
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
-
-    <div class="app-container" style="position: relative; z-index: 2;">
-        <!-- Left Vertical Sidebar -->
-        <div class="sidebar">
-            <a href="{% url 'portfolio:about' %}" class="sidebar-text" style="text-decoration: none;">Anuj Bashyal</a>
-            <div class="sidebar-line"></div>
-            <div class="sidebar-year mono">2024</div>
-        </div>
-
-        <!-- Main Content Area -->
-        <div class="main-area">
-            <!-- Navbar -->
-            <nav class="navbar">
-                <div class="nav-logo">
-                    <a href="{% url 'portfolio:about' %}" class="logo-ab">AB<span>.</span></a>
-                </div>
-                <div class="nav-links">
-                    <a href="{% url 'portfolio:about' %}" class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}">About Me</a>
-                    <a href="{% url 'portfolio:portfolio' %}" class="nav-link {% if request.resolver_match.url_name == 'portfolio' %}active{% endif %}">Portfolio</a>
-                    <a href="{% url 'portfolio:services' %}" class="nav-link {% if request.resolver_match.url_name == 'services' %}active{% endif %}">Services</a>
-                </div>
-                <div class="nav-actions">
-                    <div class="theme-toggle" onclick="toggleTheme()">
-                        <span id="theme-light">☀️</span>
-                        <span id="theme-dark" class="active-mode">🌙</span>
-                    </div>
-                    <a href="#" class="btn-primary open-contact-modal">Book A Call ↗</a>
-                </div>
-            </nav>
-
-            <div class="content-padding">
-                {% block content %}
-                {% endblock %}
-            </div>
+    
+    <div class="preloader" id="preloader">
+        <div class="preloader-text">
+            Initializing System<span class="cursor-blink"></span>
         </div>
     </div>
 
-    <!-- Book a Call Modal -->
+    <header id="header">
+        <div class="nav-inner">
+            <a href="#about" class="nav-logo">
+                <div class="logo-circle"></div>
+                <div class="logo-text">ANUJ.DEV</div>
+            </a>
+            
+            <div class="nav-links">
+                <a href="#about" class="nav-link">About</a>
+                <a href="#services" class="nav-link">Services</a>
+                <a href="#portfolio" class="nav-link">Projects</a>
+                <a href="#" class="nav-link open-contact-modal">Work with me</a>
+            </div>
+            
+            <div class="nav-right-info">
+                <div class="nav-right-text">[ Email ]</div>
+                <a href="mailto:anujbas100@gmail.com" style="text-decoration:none; margin-left:1rem;">
+                    <span class="nav-right-text" style="color:var(--text-white);">anujbas100@gmail.com</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Modal -->
     <div id="contactModal" class="contact-modal">
-        <div class="contact-modal-content">
-            <div class="modal-3d-scene">
-                <div class="modal-3d-wrapper" id="modal3DWrapper">
-                    
-                    <!-- Front Face: The Form -->
-                    <div id="contactFormContainer" class="modal-face modal-front">
-                        <button id="closeModalBtn" class="close-modal">&times;</button>
-                        <h2 class="heading-font" style="margin-top:0;">Book a Consultation</h2>
-                        <p class="mono" style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 2rem;">INITIALIZE CONNECTION SEQUENCE</p>
-                        
-                        <form id="contactForm">
-                            <div class="form-group">
-                                <label class="mono">NAME</label>
-                                <input type="text" id="contactName" required placeholder="John Doe">
-                            </div>
-                            <div class="form-group">
-                                <label class="mono">EMAIL</label>
-                                <input type="email" id="contactEmail" required placeholder="john@company.com">
-                            </div>
-                            <div class="form-group">
-                                <label class="mono">PHONE NUMBER (OPTIONAL)</label>
-                                <div class="phone-input-wrapper">
-                                    <select id="countryCode">
-                                        <option value="+1">🇺🇸 +1 (US)</option>
-                                        <option value="+44">🇬🇧 +44 (UK)</option>
-                                        <option value="+91">🇮🇳 +91 (IN)</option>
-                                        <option value="+61">🇦🇺 +61 (AU)</option>
-                                        <option value="+81">🇯🇵 +81 (JP)</option>
-                                        <option value="+49">🇩🇪 +49 (DE)</option>
-                                        <option value="+33">🇫🇷 +33 (FR)</option>
-                                        <option value="+977">🇳🇵 +977 (NP)</option>
-                                    </select>
-                                    <input type="tel" id="contactPhone" placeholder="(555) 000-0000">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="mono">WHAT YOU NEED TO BUILD</label>
-                                <textarea id="contactProject" required rows="4" placeholder="Describe your architecture or product needs..."></textarea>
-                            </div>
-                            <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; margin-top: 1rem;">
-                                TRANSMIT REQUEST
-                            </button>
-                        </form>
-                    </div>
-                    
-                    <!-- Back Face: 3D Thank You -->
-                    <div id="thankYouContainer" class="modal-face modal-back">
-                        <button id="closeModalBtnBack" class="close-modal">&times;</button>
-                        <div class="success-icon-3d">✓</div>
-                        <div class="success-text-3d heading-font">SUCCESS</div>
-                        <p style="color: var(--text-secondary); margin-top: 1.5rem; font-size: 1.1rem; transform: translateZ(30px);">Transmission successful.<br>I will be in touch shortly.</p>
-                    </div>
-
+        <div class="modal-content">
+            <button id="closeModalBtn" class="close-modal">&times;</button>
+            
+            <div id="formSection">
+                <div class="modal-header">
+                    <h2>Initiate Project</h2>
+                    <p>Let's build something exceptional.</p>
                 </div>
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" id="contactName" required placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="contactEmail" required placeholder="john@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Project Details</label>
+                        <textarea id="contactProject" required rows="3" placeholder="Tell me about your requirements..."></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Send Transmission</button>
+                </form>
+            </div>
+
+            <div id="successSection" class="success-message">
+                <h3>Message Received</h3>
+                <p style="color: var(--text-gray); font-family: var(--font-mono); font-size: 1.4rem;">I will be in touch shortly.</p>
             </div>
         </div>
     </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
     <script>
-        const htmlDoc = document.documentElement;
-        const themeLight = document.getElementById('theme-light');
-        const themeDark = document.getElementById('theme-dark');
-        
-        function initTheme() {
-            const savedTheme = localStorage.getItem('theme') || 'dark';
-            htmlDoc.setAttribute('data-theme', savedTheme);
-            updateThemeIcons(savedTheme);
-        }
-        
-        function toggleTheme() {
-            const currentTheme = htmlDoc.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            htmlDoc.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            updateThemeIcons(newTheme);
-        }
+        // Preloader Logic
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('preloader');
+            setTimeout(() => {
+                preloader.style.opacity = '0';
+                setTimeout(() => {
+                    preloader.style.display = 'none';
+                    // Dispatch custom event to trigger GSAP hero animation
+                    window.dispatchEvent(new Event('preloaderDone'));
+                }, 800);
+            }, 500);
+        });
 
-        function updateThemeIcons(theme) {
-            if (theme === 'dark') {
-                themeDark.classList.add('active-mode');
-                themeLight.classList.remove('active-mode');
+        // Initialize Lenis Smooth Scrolling
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            direction: 'vertical',
+            gestureDirection: 'vertical',
+            smooth: true
+        })
+
+        lenis.on('scroll', ScrollTrigger.update)
+        gsap.ticker.add((time)=>{
+            lenis.raf(time * 1000)
+        })
+        gsap.ticker.lagSmoothing(0)
+
+        // Navbar Border on Scroll
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
             } else {
-                themeLight.classList.add('active-mode');
-                themeDark.classList.remove('active-mode');
+                header.classList.remove('scrolled');
             }
-        }
-        
-        initTheme();
-    </script>
-    
-    {% block extra_js %}{% endblock %}
+        });
 
-    <script type="module">
-        import initGravityGrid from "{% static 'portfolio/js/gravity-grid.js' %}";
-        
-        const getGridOptions = (theme) => {
-            // Using --accent-cyan for the dot/spotlight color
-            // Using --bg-outer for the page background hex (vignette)
-            if (theme === 'light') {
-                return {
-                    color: [8, 145, 178], // --accent-cyan: #0891b2
-                    bg: '#f8fafc',        // --bg-outer: #f8fafc
-                    vignette: false
-                };
-            } else {
-                return {
-                    color: [6, 182, 212], // --accent-cyan: #06b6d4
-                    bg: '#0a0d12'         // --bg-outer: #0a0d12
-                };
-            }
-        };
+        // Smooth scroll anchor links through Lenis
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href === '#') return; // Skip empty hash links to prevent querySelector crash
+                
+                e.preventDefault();
+                const target = document.querySelector(href);
+                if (target) {
+                    lenis.scrollTo(target, { offset: -80 });
+                }
+            });
+        });
 
-        const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
-        const grid = initGravityGrid(getGridOptions(currentTheme));
-
-        // Book a Call Modal Logic
+        // Modal Logic
         const modal = document.getElementById('contactModal');
         const closeModalBtn = document.getElementById('closeModalBtn');
-        const closeModalBtnBack = document.getElementById('closeModalBtnBack');
-        const contactForm = document.getElementById('contactForm');
-        const modal3DWrapper = document.getElementById('modal3DWrapper');
-
+        const formSection = document.getElementById('formSection');
+        const successSection = document.getElementById('successSection');
+        
         document.querySelectorAll('.open-contact-modal').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 modal.classList.add('is-active');
-                modal3DWrapper.classList.remove('is-flipped');
-                contactForm.reset();
+                formSection.style.display = 'block';
+                successSection.style.display = 'none';
+                document.getElementById('contactForm').reset();
+                lenis.stop();
             });
         });
 
-        if (modal) {
-            const closeModal = () => modal.classList.remove('is-active');
-            
-            closeModalBtn.addEventListener('click', closeModal);
-            closeModalBtnBack.addEventListener('click', closeModal);
+        const closeModal = () => {
+            modal.classList.remove('is-active');
+            lenis.start();
+        }
+        
+        closeModalBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
 
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) closeModal();
-            });
-
-            function getCookie(name) {
-                let cookieValue = null;
-                if (document.cookie && document.cookie !== '') {
-                    const cookies = document.cookie.split(';');
-                    for (let i = 0; i < cookies.length; i++) {
-                        const cookie = cookies[i].trim();
-                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                            break;
-                        }
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
                     }
                 }
-                return cookieValue;
             }
-
-            contactForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const name = document.getElementById('contactName').value;
-                const email = document.getElementById('contactEmail').value;
-                const countryCode = document.getElementById('countryCode').value;
-                const rawPhone = document.getElementById('contactPhone').value;
-                const project_description = document.getElementById('contactProject').value;
-                const submitBtn = contactForm.querySelector('button[type="submit"]');
-                
-                // Combine country code and phone only if phone is provided
-                const phone = rawPhone.trim() !== '' ? `${countryCode} ${rawPhone}` : '';
-
-                submitBtn.innerText = 'TRANSMITTING...';
-                submitBtn.disabled = true;
-
-                fetch("/api/contact/", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': getCookie('csrftoken') || ''
-                    },
-                    body: JSON.stringify({ name, email, phone, project_description })
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        modal3DWrapper.classList.add('is-flipped');
-                    } else {
-                        alert('Error: ' + data.error);
-                    }
-                })
-                .catch(err => {
-                    console.error(err);
-                    alert('A network error occurred.');
-                })
-                .finally(() => {
-                    submitBtn.innerText = 'TRANSMIT REQUEST';
-                    submitBtn.disabled = false;
-                });
-            });
+            return cookieValue;
         }
 
-        // Listen for theme changes to update grid colors
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.attributeName === 'data-theme') {
-                    const newTheme = document.documentElement.getAttribute('data-theme');
-                    grid.setOptions(getGridOptions(newTheme));
+        document.getElementById('contactForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.innerText = 'Transmitting...';
+
+            const name = document.getElementById('contactName').value;
+            const email = document.getElementById('contactEmail').value;
+            const project_description = document.getElementById('contactProject').value;
+            // Phone logic removed to match minimalist hontran style, passing empty
+            const phone = ''; 
+
+            fetch("/api/contact/", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken') || ''
+                },
+                body: JSON.stringify({ name, email, phone, project_description })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    formSection.style.display = 'none';
+                    successSection.style.display = 'block';
+                } else {
+                    alert('Error: ' + data.error);
                 }
+            })
+            .catch(() => alert('A network error occurred.'))
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerText = 'Send Transmission';
             });
         });
-        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     </script>
+    
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

@@ -27,6 +27,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.vscode.dev',
+    'https://*.github.dev',
+    'https://*.ngrok-free.app',
+    'https://*.devtunnels.ms',
+    'http://*.localhost'
+]
+
 
 # Application definition
 
