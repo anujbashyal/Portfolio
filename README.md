@@ -1,26 +1,24 @@
-# Portfolio Showcase: Terminal Precision
+# Anuj.dev: Awwwards-Winning Style Backend Developer Portfolio
 
-A production-ready, dynamic portfolio website built with Python and Django. This project features a sleek, dark-mode "Terminal Precision" aesthetic designed for backend engineers and developers. 
+A production-ready, dynamic portfolio website built with Python and Django. This project features an extremely premium, Awwwards-style single-page scrolling aesthetic designed specifically for backend engineers and developers. 
 
-It is built as a multi-page web application featuring custom CSS grid layouts, dynamic database models, interactive JavaScript animations, and an intuitive Django Admin interface for content management.
+It is built as a single-page web application featuring high-performance smooth scrolling (Lenis), robust GSAP animations, dynamic database models, an interactive soft-body physics engine, and an intuitive Django Admin interface for content management.
 
 ## Features
 
-- **Dark Mode Aesthetic**: A custom `#0a0d12` to `#11141a` color palette, sleek monospace highlights, and a rounded "app window" layout.
-- **Dynamic Content Management**: Fully integrated Django Admin panel to upload custom profile photos and manage portfolio deployment cards.
-- **Cyberpunk Hover Effects**: Advanced CSS hover animations on the navigation bar featuring glowing neon drop-shadows and letter-spacing expansion.
-- **Interactive Matrix Portrait**: A mathematical JavaScript puzzle animation that shatters the hero image into 16 reactive CSS pieces when clicked.
-- **Multi-Page Architecture**: 
-  - `/` (About Me): Hero section, statistics, and dynamic interactive portrait.
-  - `/portfolio/` (Portfolio): Dynamic project grid driven by a Django `ListView`.
-  - `/services/` (Services): 3-column architectural capabilities overview.
+- **Awwwards-Style Aesthetic**: A custom premium dark color palette (`#121110`), elegant typography mixing Oswald, Manrope, and JetBrains Mono, and massive display headers.
+- **Dynamic Content Management**: Fully integrated Django Admin panel to upload custom profile photos, manage interactive hover images for services, and manage your portfolio deployment cards.
+- **Lenis Smooth Scrolling**: Ultra-smooth, inertia-based vertical scrolling using Studio Freight's Lenis library.
+- **GSAP Animations**: ScrollTrigger-powered fade-ins, stagger animations, a typewriter effect with a blinking terminal cursor, and a customized 3D mouse hover effect on the title.
+- **Soft-Body Physics "Jelly Pet"**: An interactive HTML5 Canvas element featuring node-based spring physics that responds to your mouse dragging and throwing, acting as a fun Easter egg.
+- **Dynamic Mouse-Follow Elements**: Custom JavaScript implementing zero-delay `gsap.quickTo` logic for floating service images (Django REST, Database Topology) that strictly appear in designated layout gaps.
 
 ## Tech Stack
 
-- **Backend**: Python 3.13, Django 6.1 (MVT Architecture)
+- **Backend**: Python, Django (MVT Architecture)
 - **Database**: SQLite3 (Development)
 - **Frontend**: Vanilla HTML5, Custom CSS3, Vanilla JavaScript
-- **Image Processing**: Pillow 10.0+
+- **Libraries**: GSAP (ScrollTrigger), Studio Freight Lenis
 
 ## Local Installation
 
@@ -62,8 +60,5 @@ It is built as a multi-page web application featuring custom CSS grid layouts, d
 
 ## Managing the Portfolio
 
-- **Profile Photo**: Navigate to `http://127.0.0.1:8000/admin/`, go to **Portfolio Settings**, and upload a new profile photo. The layout and puzzle animation will dynamically adapt to the new image.
-- **Projects**: Add, edit, or delete projects under the **Projects** section in the admin panel to update the `/portfolio/` page grid.
-
-## License
-MIT License. Feel free to clone, customize, and use this layout for your own professional portfolio!
+- **Profile & Hover Images**: Navigate to `http://127.0.0.1:8000/admin/`, go to **Portfolio Settings**, and upload your profile photo or service section hover images directly.
+- **Projects**: Add, edit, or delete projects under the **Projects** section in the admin panel to dynamically update the horizontal project grid.
