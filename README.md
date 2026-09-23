@@ -1,12 +1,12 @@
-# Anuj.dev: Awwwards-Winning Style Backend Developer Portfolio
+# Anuj.dev: Premium Backend Developer Portfolio
 
-A production-ready, dynamic portfolio website built with Python and Django. This project features an extremely premium, Awwwards-style single-page scrolling aesthetic designed specifically for backend engineers and developers. 
+A production-ready, dynamic portfolio website built with Python and Django. This project features an extremely premium single-page scrolling aesthetic designed specifically for backend engineers and developers. 
 
 It is built as a single-page web application featuring high-performance smooth scrolling (Lenis), robust GSAP animations, dynamic database models, an interactive soft-body physics engine, and an intuitive Django Admin interface for content management.
 
 ## Features
 
-- **Awwwards-Style Aesthetic**: A custom premium dark color palette (`#121110`), elegant typography mixing Oswald, Manrope, and JetBrains Mono, and massive display headers.
+- **Premium Aesthetic**: A custom premium dark color palette (`#121110`), elegant typography mixing Oswald, Manrope, and JetBrains Mono, and massive display headers.
 - **Dynamic Content Management**: Fully integrated Django Admin panel to upload custom profile photos, manage interactive hover images for services, and manage your portfolio deployment cards.
 - **Lenis Smooth Scrolling**: Ultra-smooth, inertia-based vertical scrolling using Studio Freight's Lenis library.
 - **GSAP Animations**: ScrollTrigger-powered fade-ins, stagger animations, a typewriter effect with a blinking terminal cursor, and a customized 3D mouse hover effect on the title.
